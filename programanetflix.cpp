@@ -20,7 +20,6 @@ ProgramaNetflix::ProgramaNetflix(){
 }
 
 ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){
-  cout << endl;
   this->id = values[0];
   this->title = values[1];
   this->type = values[2];

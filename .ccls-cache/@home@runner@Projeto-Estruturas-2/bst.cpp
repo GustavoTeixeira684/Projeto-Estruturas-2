@@ -9,10 +9,10 @@ void BstTree::print(){
 }
 
 void BstTree::print(ProgramaNetflix *node, int space){
- 	if (node != NULL){	
+ 	if (node != nullptr){	
     print(node->getRight(), space + 5);
     for (int k = 0; k < space; ++k){
-	 	cout << " ";
+	 	  cout << " ";
     }
     cout << node->getId() << "\n";
     print(node->getLeft(), space + 5);
@@ -23,10 +23,11 @@ ProgramaNetflix *BstTree::getRoot(){
   return this->root;
 }
 
-ProgramaNetflix *BstTree::search(string id){
+ProgramaNetflix *BstTree::search(string id, int *step){
   ProgramaNetflix *aux = this->root;
   int compare;
-  while(aux != nullptr){
+  while( aux != nullptr && aux->getId() != id){
+    (*step)++;
     compare = stringCompare(id, aux->getId());
     if(compare == -1){ // Valor procurado maior que o do nó atual
       aux = aux->getRight();
@@ -40,7 +41,7 @@ ProgramaNetflix *BstTree::search(string id){
 ProgramaNetflix *BstTree::search(string id, ProgramaNetflix *father){
   ProgramaNetflix *aux = this->root;
   int compare;
-  while(aux != nullptr){
+  while( aux != nullptr && aux->getId() != id){
     father = aux;
     compare = stringCompare(id, aux->getId());
     if(compare == -1){ // Valor procurado maior que o do nó atual
@@ -54,13 +55,14 @@ ProgramaNetflix *BstTree::search(string id, ProgramaNetflix *father){
 
 
 
-void BstTree::insert(string *values){
+void BstTree::insert(string *values, int *step){
   ProgramaNetflix *aux = this->root;
   ProgramaNetflix *temp;
   int compare;
   if(aux == nullptr){
     temp = new ProgramaNetflix(values, nullptr);
     this->root = temp;
+    (*step)++;
   }else{
     while(1){
       compare = stringCompare(values[0], aux->getId());
@@ -83,48 +85,53 @@ void BstTree::insert(string *values){
       }else{ // Significa que o valor é o mesmo. Assim, não iremos inserir
         break;
       }
+      (*step)++;
     }
   }
   aux = nullptr;
   temp = nullptr;
 }
 
-void BstTree::remove(string id){
+void BstTree::remove(string id, int *step){
   ProgramaNetflix *father, *aux, *newNode;
-  aux = search(id, father);
+  aux = search(id, step);
   if(aux != nullptr){
-    if(aux->getLeft() == nullptr || aux->getRight() == nullptr){ // Nó com um filho ou menor
-      newNode = aux->getLeft() ? aux->getLeft() : aux->getRight(); // Pega o endereço do filho
-      if(newNode != nullptr){ // Nó com apenas um filho
-        if(aux == this->root){
-          newNode->setFather(nullptr);
-          this->root = newNode;
-        }else{
-          newNode->setFather(father); // O nó que ficará no lugar do que será excluido aponta para o pai do nó que será excluído
-        }
-      }
-    }else{ // Nó com dois filhos
-      newNode = aux->getLeft(); // Procura pelo maior dos menores
+    father = aux->getFather();
+    if(aux->getLeft() != nullptr && aux->getRight() != nullptr){ // Nó com dois filhos
+      newNode = aux->getLeft();
       while(newNode->getRight() != nullptr){
         newNode = newNode->getRight();
       }
-        string *values = newNode->getValues(); // Troca os valores do nó
-        newNode->updateValues(aux->getValues());
-        aux->updateValues(values);
-        aux = newNode; // Atualiza o nó que deverá ser apagado
-        father = newNode->getFather();
-        newNode = nullptr;
+      string *values = newNode->getValues();
+      newNode->updateValues(aux->getValues());
+      aux->updateValues(values);
+      aux = newNode;
+      father = aux->getFather();
+      values = nullptr;
+      newNode = nullptr;
     }
-    
-    if(father->getLeft() == aux){
-      father->setLeft(newNode);
+
+    if(aux->getLeft() == nullptr || aux->getRight() == nullptr){ // Nó com um filho ou nó folha
+      newNode = aux->getLeft() ? aux->getLeft() : aux->getRight();
+      if(newNode != nullptr){ // Se o nó tiver um filho
+        newNode->setFather(father);
+      }
+    }
+
+    if(aux != this->root){
+      if(father->getLeft() == aux){
+        father->setLeft(newNode);
+      }else{
+        father->setRight(newNode);
+      }
     }else{
-      father->setRight(newNode);
+      this->root = newNode;
     }
     delete(aux);
-    newNode = nullptr;
     aux = nullptr;
     father = nullptr;
+    newNode = nullptr;
+
   }else{
     cout << "\n\nValor não encontrado\n\n";
   }

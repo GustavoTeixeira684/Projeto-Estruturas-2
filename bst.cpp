@@ -23,10 +23,11 @@ ProgramaNetflix *BstTree::getRoot(){
   return this->root;
 }
 
-ProgramaNetflix *BstTree::search(string id){
+ProgramaNetflix *BstTree::search(string id, int *step){
   ProgramaNetflix *aux = this->root;
   int compare;
   while( aux != nullptr && aux->getId() != id){
+    (*step)++;
     compare = stringCompare(id, aux->getId());
     if(compare == -1){ // Valor procurado maior que o do nó atual
       aux = aux->getRight();
@@ -54,13 +55,14 @@ ProgramaNetflix *BstTree::search(string id, ProgramaNetflix *father){
 
 
 
-void BstTree::insert(string *values){
+void BstTree::insert(string *values, int *step){
   ProgramaNetflix *aux = this->root;
   ProgramaNetflix *temp;
   int compare;
   if(aux == nullptr){
     temp = new ProgramaNetflix(values, nullptr);
     this->root = temp;
+    (*step)++;
   }else{
     while(1){
       compare = stringCompare(values[0], aux->getId());
@@ -83,15 +85,16 @@ void BstTree::insert(string *values){
       }else{ // Significa que o valor é o mesmo. Assim, não iremos inserir
         break;
       }
+      (*step)++;
     }
   }
   aux = nullptr;
   temp = nullptr;
 }
 
-void BstTree::remove(string id){
+void BstTree::remove(string id, int *step){
   ProgramaNetflix *father, *aux, *newNode;
-  aux = search(id);
+  aux = search(id, step);
   if(aux != nullptr){
     father = aux->getFather();
     if(aux->getLeft() != nullptr && aux->getRight() != nullptr){ // Nó com dois filhos

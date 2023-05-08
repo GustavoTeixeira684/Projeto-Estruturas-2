@@ -10,7 +10,9 @@ using namespace std;
 
 void populateBst(BstTree *bst, AvlTree *avl, vector<string> *list){
   string *values;
-  int length;
+  int length, step_bst, step_avl;
+  step_bst = 0;
+  step_avl = 0;
   for(int i = 0; i < list->size(); i++){
     values = strSplit(list->at(i), ';', &length);
     values = dropIndex(values,9, length);
@@ -20,10 +22,11 @@ void populateBst(BstTree *bst, AvlTree *avl, vector<string> *list){
       //   cout << values[j] << "|";
       // }
       // cout << endl << endl;
-      bst->insert(values);
-      avl->insert(values);
+      bst->insert(values, &step_bst);
+      avl->insert(values, &step_avl);
     }
   }
+  cout << "Passos Bst: " << step_bst << endl << "Passos Avl: " << step_avl << endl;
 }
 
 void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler o arquivo
@@ -46,7 +49,7 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
 
 }
 
-void teste(){
+/*void teste(){
   AvlTree *avl = new AvlTree();
   string option = "-1";
   string values[15] = {"3","1","1","1","1","1","1","1","1","1","1","1","1","1"};
@@ -75,7 +78,7 @@ void teste(){
     avl->remove(option);
     avl->print();
   }
-}
+}*/
 
 int main() {
   setlocale(LC_ALL, "Portuguese");

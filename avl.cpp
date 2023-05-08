@@ -15,7 +15,8 @@ void AvlTree::print(ProgramaNetflix *node, int space){
     for (int k = 0; k < space; ++k){
 	 	  cout << " ";
     }
-    cout << node->getId() << "[" << getBalance(node) << "]\n";
+    int temp = 0;
+    cout << node->getId() << "[" << getBalance(node, &temp) << "]\n";
     print(node->getLeft(), space+5);
   }
 }
@@ -24,10 +25,11 @@ ProgramaNetflix *AvlTree::getRoot(){
   return this->root;
 }
 
-ProgramaNetflix *AvlTree::search(string id){
+ProgramaNetflix *AvlTree::search(string id, int *step){
   ProgramaNetflix *aux = this->root;
   int compare;
   while( aux != nullptr && aux->getId() != id){
+    (*step)++;
     compare = stringCompare(id, aux->getId());
     if(compare == -1){ // Valor procurado maior que o do nó atual
       aux = aux->getRight();
@@ -53,18 +55,19 @@ ProgramaNetflix *AvlTree::search(string id, ProgramaNetflix *father){
   return aux;
 }
 
-int AvlTree::getHeight(ProgramaNetflix *node){
+int AvlTree::getHeight(ProgramaNetflix *node, int *step){
   int alturaEsquerda, alturaDireita;
+  (*step)++;
   if(node == nullptr){
     return -1;
   }
-  alturaEsquerda = getHeight(node->getLeft());
-  alturaDireita = getHeight(node->getRight());
+  alturaEsquerda = getHeight(node->getLeft(), step);
+  alturaDireita = getHeight(node->getRight(), step);
   return alturaEsquerda > alturaDireita ? alturaEsquerda + 1 : alturaDireita + 1;
 }
 
-int AvlTree::getBalance(ProgramaNetflix *node){
-  return getHeight(node->getRight()) - getHeight(node->getLeft());
+int AvlTree::getBalance(ProgramaNetflix *node, int *step){
+  return getHeight(node->getRight(), step) - getHeight(node->getLeft(), step);
 
 }
 
@@ -102,12 +105,12 @@ void AvlTree::rightRotate(ProgramaNetflix *node){
   temp = nullptr;
 }
 
-void AvlTree::balanceTree(ProgramaNetflix *node){
+void AvlTree::balanceTree(ProgramaNetflix *node, int *step){
   int nodeBalance;
   while(node != nullptr){
-    nodeBalance = getBalance(node);
+    nodeBalance = getBalance(node, step);
     if(nodeBalance > 1){
-      nodeBalance = getBalance(node->getRight());
+      nodeBalance = getBalance(node->getRight(), step);
       if(nodeBalance > 0){
         // Rotação simples à esquerda
         // cout << "Rotação simples à esquerda" << endl;
@@ -119,7 +122,7 @@ void AvlTree::balanceTree(ProgramaNetflix *node){
         leftRotate(node);
       }
     }else if(nodeBalance < -1){
-      nodeBalance = getBalance(node->getLeft());
+      nodeBalance = getBalance(node->getLeft(), step);
       if(nodeBalance < 0){
         // Rotação simples à direita
         // cout << "Rotação simples à direita" << endl;
@@ -132,10 +135,11 @@ void AvlTree::balanceTree(ProgramaNetflix *node){
       }
     }
     node = node->getFather();
+    (*step)++;
   }
 }
 
-void AvlTree::insert(string *values){
+void AvlTree::insert(string *values, int *step){
   ProgramaNetflix *aux = this->root;
   ProgramaNetflix *temp;
   bool insert = true;
@@ -143,6 +147,7 @@ void AvlTree::insert(string *values){
   if(aux == nullptr){
     temp = new ProgramaNetflix(values, nullptr);
     this->root = temp;
+    (*step)++;
   }else{
     while(1){
       compare = stringCompare(values[0], aux->getId());
@@ -166,18 +171,19 @@ void AvlTree::insert(string *values){
         insert = false;
         break;
       }
+      (*step)++;
     }
   }
   if(insert){
-    balanceTree(temp);
+    balanceTree(temp, step);
   }
   aux = nullptr;
   temp = nullptr;
 }
 
-void AvlTree::remove(string id){
+void AvlTree::remove(string id, int *step){
   ProgramaNetflix *father, *aux, *newNode;
-  aux = search(id);
+  aux = search(id, step);
   if(aux != nullptr){
     father = aux->getFather();
     if(aux->getLeft() != nullptr && aux->getRight() != nullptr){ // Nó com dois filhos
@@ -211,11 +217,10 @@ void AvlTree::remove(string id){
       this->root = newNode;
     }
     delete(aux);
-    
     if(newNode != nullptr){
-      balanceTree(newNode);
+      balanceTree(newNode, step);
     }else{
-      balanceTree(father);
+      balanceTree(father, step);
     }
     aux = nullptr;
     father = nullptr;

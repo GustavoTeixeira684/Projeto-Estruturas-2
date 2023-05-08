@@ -13,15 +13,15 @@ class AvlTree{
   public:
     AvlTree();
     ProgramaNetflix *getRoot();
-    void insert(string *values);
+    void insert(string *values, int *step);
     void print();
     void print(ProgramaNetflix *node, int space);
-    void remove(string id);
-    ProgramaNetflix *search(string id);
+    void remove(string id, int *step);
+    ProgramaNetflix *search(string id, int *step);
     ProgramaNetflix *search(string id, ProgramaNetflix *father);
-    int getHeight(ProgramaNetflix *node);
-    int getBalance(ProgramaNetflix *node);
-    void balanceTree(ProgramaNetflix *node);
+    int getHeight(ProgramaNetflix *node, int *step);
+    int getBalance(ProgramaNetflix *node, int *step);
+    void balanceTree(ProgramaNetflix *node, int *step);
     void leftRotate(ProgramaNetflix *node);
     void rightRotate(ProgramaNetflix *node);
 
