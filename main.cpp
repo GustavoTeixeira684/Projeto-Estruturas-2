@@ -84,9 +84,36 @@ int main() {
   setlocale(LC_ALL, "Portuguese");
   BstTree *bst = new BstTree();
   AvlTree *avl = new AvlTree();
-  readArchive(bst, avl, "dados/titles.csv");
-  // avl->print();
-  // teste();
-  // bst->print();
+  // readArchive(bst, avl, "dados/titles.csv");
+  int option = -1;
+
+  cout << "Bem vindo ao programa de Analise/Ciencia de dados com Arvores BST e AVL\n\n";
+  cout << "Desenvolvedores:\n\tGustavo Teixeira dos Santos  TIA 32197020\n\tCleverson Pereira da Silva\n\tVictor Junqueira\n\tFelipe Nakandakari\n\tPedro\n\n";
+  
+  while(option != 8){
+    cout << "O que deseja:\n\t1 = Ler dados de arquivo\n\t2 - Opcoes de Analise\n\t3 - Inserir Programa\n\t4 - Buscar Programa\n\t5 - Remover Programa\n\t6 - Exibir a Altura das Árvores\n\t7 - Salvar dados em arquivo\n\t8 - Encerrar Programa\nEscolha: ";
+    cin >> option;
+    switch(option){
+      case 1: // Ler dados de arquivo
+      break;
+      case 2: // Opcoes de Analise
+      break;
+      case 3: // Inserir Programa
+      break;
+      case 4: // Buscar Programa
+      break;
+      case 5: // Remover Programa
+      break;
+      case 6: // Exibir altura das Arvores
+      break;
+      case 7: // Salvar dados em arquivo
+      break;
+      case 8: // Encerrar Programa
+      break;
+      default: // Caso o usuário selecione outros valores
+        cout << "\n\nPor favor, Digite um valor valido!!\n\n";
+      break;
+    }
+  }
 
 }
