@@ -152,3 +152,14 @@ bool isNull(string *values, int length){
 	}
 	return false;
 }
+
+bool isNumber(string value){
+  int i = 0;
+  while(value[i] != '\0'){
+    if((int)value[i] < 48 || (int)value[i] > 57){
+      return false;
+    }
+    i++;
+  }
+  return true;
+}

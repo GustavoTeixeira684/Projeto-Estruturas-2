@@ -82,25 +82,48 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
 
 int main() {
   setlocale(LC_ALL, "Portuguese");
-  BstTree *bst = new BstTree();
-  AvlTree *avl = new AvlTree();
+  const string PATH = "dados/titles.csv";
+  ProgramaNetflix *temp;
+  BstTree *bst = new BstTree(); // Objeto do tipo Arvore BST
+  AvlTree *avl = new AvlTree(); // Objeto do tipo Arvore AVL
   // readArchive(bst, avl, "dados/titles.csv");
-  int option = -1;
+  int option = -1, step_bst, step_avl; // Variavel que armazena a opcao do usuario
+  string input, archivePath, id, *values = nullptr; // Variavel que contem o caminho do arquivo para ler
 
   cout << "Bem vindo ao programa de Analise/Ciencia de dados com Arvores BST e AVL\n\n";
   cout << "Desenvolvedores:\n\tGustavo Teixeira dos Santos  TIA 32197020\n\tCleverson Pereira da Silva\n\tVictor Junqueira\n\tFelipe Nakandakari\n\tPedro\n\n";
   
   while(option != 8){
-    cout << "O que deseja:\n\t1 = Ler dados de arquivo\n\t2 - Opcoes de Analise\n\t3 - Inserir Programa\n\t4 - Buscar Programa\n\t5 - Remover Programa\n\t6 - Exibir a Altura das Árvores\n\t7 - Salvar dados em arquivo\n\t8 - Encerrar Programa\nEscolha: ";
-    cin >> option;
+    cout << "\n\nO que deseja:\n\t1 - Ler dados de arquivo\n\t2 - Opcoes de Analise\n\t3 - Inserir Programa\n\t4 - Buscar Programa\n\t5 - Remover Programa\n\t6 - Exibir a Altura das Árvores\n\t7 - Salvar dados em arquivo\n\t8 - Encerrar Programa\nEscolha: ";
+    getline(cin, input);
+    option = isNumber(input) ? stoi(input) : -1;
     switch(option){
       case 1: // Ler dados de arquivo
+        cout << "Digite 1 para ler o arquivo padrao ou passe o caminho do arquivo: ";
+        getline(cin, archivePath);
+        if(archivePath == "1"){
+          readArchive(bst, avl, PATH);
+        }else{
+          readArchive(bst, avl, archivePath);
+        }
+        cout << endl; // Insere uma quebra de linha
       break;
       case 2: // Opcoes de Analise
       break;
       case 3: // Inserir Programa
       break;
       case 4: // Buscar Programa
+        cout << "Digite o codigo do programa que voce deseja pesquisar: ";
+        getline(cin, id);
+        step_bst = 0;
+        step_avl = 0;
+        temp = avl->search(id, &step_avl); // Ja que as duas arvores estao sincronizadas, so eh necessario um dos dois valores para exibir os resultadosdo Programa na tela
+        if(bst->search(id, &step_bst) != nullptr && temp != nullptr ){
+          temp->printValue();
+        }else{
+          cout << "\n\nValor nao encontrado!\n";
+        }
+        cout << "\nQuantidade de passos da checagem:\n\tAVL: " << step_avl << "\n\tBST: " << step_bst << endl;
       break;
       case 5: // Remover Programa
       break;
@@ -109,6 +132,8 @@ int main() {
       case 7: // Salvar dados em arquivo
       break;
       case 8: // Encerrar Programa
+        delete values;
+        values = nullptr;
       break;
       default: // Caso o usuário selecione outros valores
         cout << "\n\nPor favor, Digite um valor valido!!\n\n";

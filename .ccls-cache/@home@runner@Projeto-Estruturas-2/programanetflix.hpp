@@ -36,6 +36,7 @@ class ProgramaNetflix{
     string getId();
     string *getValues();
     void updateValues(string *values);
+    void printValue();
     
 };
 

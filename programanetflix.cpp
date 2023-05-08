@@ -101,3 +101,10 @@ string ProgramaNetflix::getId(){
   return this->id;
 }
 
+void ProgramaNetflix::printValue(){
+  string *values = this->getValues();
+  for(int i = 0; i <  13; i++){
+    cout << values[i] << " | ";
+  }
+  cout <<endl;
+}

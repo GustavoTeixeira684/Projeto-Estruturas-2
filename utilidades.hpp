@@ -28,4 +28,6 @@ string *dropIndex(string *values, int index, int length); // Função que dropa 
 
 bool isNull(string *values, int length); // Função que retorna true se existir algum item nulo no array
 
+bool isNumber(string value); // Funcao para ver se ovalor inserido e numerico
+
 #endif
