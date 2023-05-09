@@ -181,7 +181,7 @@ void AvlTree::insert(string *values, int *step){
   temp = nullptr;
 }
 
-void AvlTree::remove(string id, int *step){
+bool AvlTree::remove(string id, int *step){
   ProgramaNetflix *father, *aux, *newNode;
   aux = search(id, step);
   if(aux != nullptr){
@@ -225,8 +225,8 @@ void AvlTree::remove(string id, int *step){
     aux = nullptr;
     father = nullptr;
     newNode = nullptr;
-
+    return true;
   }else{
-    cout << "\n\nValor não encontrado\n\n";
+    return false;
   }
 }

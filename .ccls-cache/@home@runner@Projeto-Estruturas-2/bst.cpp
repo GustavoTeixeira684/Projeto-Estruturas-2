@@ -23,6 +23,17 @@ ProgramaNetflix *BstTree::getRoot(){
   return this->root;
 }
 
+int BstTree::getHeight(ProgramaNetflix *node, int *step){
+  int alturaEsquerda, alturaDireita;
+  (*step)++;
+  if(node == nullptr){
+    return -1;
+  }
+  alturaEsquerda = getHeight(node->getLeft(), step);
+  alturaDireita = getHeight(node->getRight(), step);
+  return alturaEsquerda > alturaDireita ? alturaEsquerda + 1 : alturaDireita + 1;
+}
+
 ProgramaNetflix *BstTree::search(string id, int *step){
   ProgramaNetflix *aux = this->root;
   int compare;
@@ -92,7 +103,7 @@ void BstTree::insert(string *values, int *step){
   temp = nullptr;
 }
 
-void BstTree::remove(string id, int *step){
+bool BstTree::remove(string id, int *step){
   ProgramaNetflix *father, *aux, *newNode;
   aux = search(id, step);
   if(aux != nullptr){
@@ -131,8 +142,8 @@ void BstTree::remove(string id, int *step){
     aux = nullptr;
     father = nullptr;
     newNode = nullptr;
-
+    return true;
   }else{
-    cout << "\n\nValor não encontrado\n\n";
+    return false;
   }
 }

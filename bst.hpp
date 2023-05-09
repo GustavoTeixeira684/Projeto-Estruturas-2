@@ -21,9 +21,10 @@ class BstTree{
     void insert(string *values, int *step);
     void print();
     void print(ProgramaNetflix *node, int space);
-    void remove(string id, int *step);
+    bool remove(string id, int *step);
     ProgramaNetflix *search(string id, int *step);
     ProgramaNetflix *search(string id, ProgramaNetflix *father);
+    int getHeight(ProgramaNetflix *node, int *step);
 
 };
 

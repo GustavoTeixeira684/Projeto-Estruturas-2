@@ -118,16 +118,31 @@ int main() {
         step_bst = 0;
         step_avl = 0;
         temp = avl->search(id, &step_avl); // Ja que as duas arvores estao sincronizadas, so eh necessario um dos dois valores para exibir os resultadosdo Programa na tela
-        if(bst->search(id, &step_bst) != nullptr && temp != nullptr ){
+        if(temp != nullptr && bst->search(id, &step_bst) != nullptr){
           temp->printValue();
         }else{
           cout << "\n\nValor nao encontrado!\n";
         }
         cout << "\nQuantidade de passos da checagem:\n\tAVL: " << step_avl << "\n\tBST: " << step_bst << endl;
+        temp = nullptr;
       break;
       case 5: // Remover Programa
+        cout << "\nDigite o id do item que deseja remover: ";
+        getline(cin, id);
+        step_bst = 0;
+        step_avl = 0;
+        if(bst->remove(id, &step_bst) && avl->remove(id, &step_avl)){
+          cout << "\nExcluido com sucesso!";
+          cout << "\nQuantidade de passos da para remocao:\n\tAVL: " << step_avl << "\n\tBST: " << step_bst << endl;
+        }else{
+          cout << "\nValor nao encontrado!" << endl;
+        }
       break;
       case 6: // Exibir altura das Arvores
+        step_bst = 0;
+        step_avl = 0;
+        cout << "\nA altura da Arvore AVL eh: " << avl->getHeight(avl->getRoot(), &step_avl) << endl;
+        cout << "A altura da Arvore BST eh: " << bst->getHeight(bst->getRoot(), &step_bst) << endl;
       break;
       case 7: // Salvar dados em arquivo
       break;
