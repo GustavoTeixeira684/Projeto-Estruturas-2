@@ -2,6 +2,7 @@
 
 AvlTree::AvlTree(){
   this->root = nullptr;
+  this->col = nullptr;
   this->qntNodes = 0;
 }
 
@@ -237,3 +238,14 @@ bool AvlTree::remove(string id, int *step){
     return false;
   }
 }
+
+void AvlTree::insertColumns(string *values){
+  if(this->col != nullptr){
+    this->col->clear();
+    delete col;
+  }
+  Column *temp = new Column(values);
+  this->col = temp;
+  temp = nullptr;
+}
+

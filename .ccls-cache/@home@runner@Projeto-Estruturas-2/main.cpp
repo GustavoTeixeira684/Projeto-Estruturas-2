@@ -39,6 +39,8 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
   file.open(path);
   if(!file.fail()){
     getline(file, result, '\n');
+    bst->insertColumns(strSplit(result, ';', &length));
+    avl->insertColumns(strSplit(result, ';', &length));
     int k = 0;
     while(file.peek() != EOF){
       values = "";

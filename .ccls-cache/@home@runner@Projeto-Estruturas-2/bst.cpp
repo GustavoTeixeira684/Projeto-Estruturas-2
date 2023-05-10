@@ -2,6 +2,7 @@
 
 BstTree::BstTree(){
   this->root = nullptr;
+  this->col = nullptr;
   this->qntNodes = 0;
 }
 
@@ -153,4 +154,14 @@ bool BstTree::remove(string id, int *step){
   }else{
     return false;
   }
+}
+
+void BstTree::insertColumns(string *values){
+  if(this->col != nullptr){
+    this->col->clear();
+    delete col;
+  }
+  Column *temp = new Column(values);
+  this->col = temp;
+  temp = nullptr;
 }

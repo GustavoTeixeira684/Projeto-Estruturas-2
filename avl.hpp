@@ -2,6 +2,7 @@
 #define __AVL_HPP__
 #include <iostream>
 #include "programanetflix.hpp"
+#include "column.hpp"
 using namespace std;
 
 class AvlTree{
@@ -9,12 +10,15 @@ class AvlTree{
   private:
     // Atributos
     ProgramaNetflix *root;
+    Column *col;
     int qntNodes;
     
   public:
     AvlTree();
     ProgramaNetflix *getRoot();
     void insert(string *values, int *step);
+    void insertColumns(string *values);
+    void updateColumn(string value, int index);
     int getQntNodes();
     void print();
     void print(ProgramaNetflix *node, int space);
