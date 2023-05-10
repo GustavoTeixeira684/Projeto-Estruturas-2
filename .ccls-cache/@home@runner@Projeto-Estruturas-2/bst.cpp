@@ -2,10 +2,15 @@
 
 BstTree::BstTree(){
   this->root = nullptr;
+  this->qntNodes = 0;
 }
 
 void BstTree::print(){
   print(this->root, 0);
+}
+
+int BstTree::getQntNodes(){
+  return this->qntNodes;
 }
 
 void BstTree::print(ProgramaNetflix *node, int space){
@@ -101,6 +106,7 @@ void BstTree::insert(string *values, int *step){
   }
   aux = nullptr;
   temp = nullptr;
+  this->qntNodes++;
 }
 
 bool BstTree::remove(string id, int *step){
@@ -142,6 +148,7 @@ bool BstTree::remove(string id, int *step){
     aux = nullptr;
     father = nullptr;
     newNode = nullptr;
+    this->qntNodes = 0;
     return true;
   }else{
     return false;

@@ -9,11 +9,13 @@ class AvlTree{
   private:
     // Atributos
     ProgramaNetflix *root;
+    int qntNodes;
     
   public:
     AvlTree();
     ProgramaNetflix *getRoot();
     void insert(string *values, int *step);
+    int getQntNodes();
     void print();
     void print(ProgramaNetflix *node, int space);
     bool remove(string id, int *step);

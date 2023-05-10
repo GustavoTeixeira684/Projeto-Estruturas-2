@@ -2,11 +2,16 @@
 
 AvlTree::AvlTree(){
   this->root = nullptr;
+  this->qntNodes = 0;
 }
 
 void AvlTree::print(){
   print(this->root, 0);
   cout << endl;
+}
+
+int AvlTree::getQntNodes(){
+  return this->qntNodes;
 }
 
 void AvlTree::print(ProgramaNetflix *node, int space){
@@ -177,6 +182,7 @@ void AvlTree::insert(string *values, int *step){
   if(insert){
     balanceTree(temp, step);
   }
+  this->qntNodes++;
   aux = nullptr;
   temp = nullptr;
 }
@@ -225,6 +231,7 @@ bool AvlTree::remove(string id, int *step){
     aux = nullptr;
     father = nullptr;
     newNode = nullptr;
+    this->qntNodes--;
     return true;
   }else{
     return false;

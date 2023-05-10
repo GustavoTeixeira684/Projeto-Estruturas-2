@@ -9,16 +9,13 @@ class BstTree{
   private:
     // Atributos
     ProgramaNetflix *root;
-
-    // Métodos
-    
-
-
+    int qntNodes;
     
   public:
     BstTree();
     ProgramaNetflix *getRoot();
     void insert(string *values, int *step);
+    int getQntNodes();
     void print();
     void print(ProgramaNetflix *node, int space);
     bool remove(string id, int *step);

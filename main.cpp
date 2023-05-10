@@ -15,18 +15,19 @@ void populateBst(BstTree *bst, AvlTree *avl, vector<string> *list){
   step_avl = 0;
   for(int i = 0; i < list->size(); i++){
     values = strSplit(list->at(i), ';', &length);
-    values = dropIndex(values,9, length);
+    values = dropIndex(values,10, length);
     if(!isNull(values, length)){
       // cout << list->at(i) << endl;
       // for(int j = 0; j < length-1; j++){
       //   cout << values[j] << "|";
       // }
       // cout << endl << endl;
+      // cout << list->at(i) << endl << endl;
       bst->insert(values, &step_bst);
       avl->insert(values, &step_avl);
     }
   }
-  cout << "Passos Bst: " << step_bst << endl << "Passos Avl: " << step_avl << endl;
+  cout << "Passos Bst: " << step_bst << " com " << bst->getQntNodes() << " nós inseridos" << endl << "Passos Avl: " << step_avl << " com " << avl->getQntNodes() << " nós inseridos" << endl;
 }
 
 void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler o arquivo
@@ -40,8 +41,23 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
     getline(file, result, '\n');
     int k = 0;
     while(file.peek() != EOF){
+      values = "";
+      for(int i = 0; i < 14; i++){
+        if(i != 10){
+          file.get(sep);
+          if(sep != ';'){
+            getline(file, result, ';');
+            values += sep + result + ";";
+          }else{
+            values += ";";
+          }
+        }else{
+          getline(file, result, ';');
+        }
+      }
       getline(file, result, '\n');
-      lista.push_back(result);
+      values += result;
+      lista.push_back(values);
       k++;
     }
   }
@@ -145,6 +161,7 @@ int main() {
         cout << "A altura da Arvore BST eh: " << bst->getHeight(bst->getRoot(), &step_bst) << endl;
       break;
       case 7: // Salvar dados em arquivo
+        
       break;
       case 8: // Encerrar Programa
         delete values;

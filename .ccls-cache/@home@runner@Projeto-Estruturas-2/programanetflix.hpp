@@ -10,6 +10,7 @@ class ProgramaNetflix{
     string id;
     string title;
     string type;
+    string description;
     int release_year;
     string age_certification;
     int runtime;
