@@ -16,6 +16,7 @@ class AvlTree{
   public:
     AvlTree();
     ProgramaNetflix *getRoot();
+    Column *getColumn();
     void insert(string *values, int *step);
     void insertColumns(string *values);
     void updateColumn(string value, int index);

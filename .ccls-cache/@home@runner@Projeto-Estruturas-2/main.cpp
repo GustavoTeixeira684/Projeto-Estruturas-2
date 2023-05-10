@@ -17,12 +17,6 @@ void populateBst(BstTree *bst, AvlTree *avl, vector<string> *list){
     values = strSplit(list->at(i), ';', &length);
     values = dropIndex(values,10, length);
     if(!isNull(values, length)){
-      // cout << list->at(i) << endl;
-      // for(int j = 0; j < length-1; j++){
-      //   cout << values[j] << "|";
-      // }
-      // cout << endl << endl;
-      // cout << list->at(i) << endl << endl;
       bst->insert(values, &step_bst);
       avl->insert(values, &step_avl);
     }
@@ -39,8 +33,8 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
   file.open(path);
   if(!file.fail()){
     getline(file, result, '\n');
-    bst->insertColumns(strSplit(result, ';', &length));
-    avl->insertColumns(strSplit(result, ';', &length));
+    bst->insertColumns(dropIndex(strSplit(result, ';', &length),10, length));
+    avl->insertColumns(dropIndex(strSplit(result, ';', &length),10,length));
     int k = 0;
     while(file.peek() != EOF){
       values = "";
@@ -67,36 +61,35 @@ void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler 
 
 }
 
-/*void teste(){
-  AvlTree *avl = new AvlTree();
-  string option = "-1";
-  string values[15] = {"3","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values);
-  string values1[15] = {"2","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values1);
-  string values2[15] = {"1","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values2);
-  string values3[15] = {"5","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values3);
-  string values4[15] = {"4","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values4);
-  string values5[15] = {"6","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values5);
-  string values6[15] = {"9","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values6);
-  string values7[15] = {"7","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values7);
-  string values8[15] = {"8","1","1","1","1","1","1","1","1","1","1","1","1","1"};
-  avl->insert(values8);
-  avl->print();
-  
-  while(option != "0"){
-    cout << "\nDigite o valor do nó que deseja retirar: ";
-    cin >> option;
-    avl->remove(option);
-    avl->print();
+void populateVector(ProgramaNetflix *node, vector<string*> *list){
+  if(node != nullptr){
+    populateVector(node->getLeft(), list);
+    list->push_back(node->getValues());
+    populateVector(node->getRight(), list);
   }
-}*/
+}
+
+void writeArchive(AvlTree *avl, string path){
+  ofstream fout(path);
+  vector<string*> list;
+  string *values = avl->getColumn()->getValues();
+  populateVector(avl->getRoot(), &list);
+  for(int i = 0; i < 1; i++){
+    fout << values[i] << ";";
+  }
+  fout << values[13] << "\n";
+  
+  for(int i = 0; i < list.size(); i++){
+    for(int j = 0; j < 13; j++){
+      fout << list.at(i)[j] << ";";
+    }
+    fout << list.at(i)[13] << "\n";
+  }
+
+  // delete values;
+  values = nullptr;
+  
+}
 
 int main() {
   setlocale(LC_ALL, "Portuguese");
@@ -163,7 +156,13 @@ int main() {
         cout << "A altura da Arvore BST eh: " << bst->getHeight(bst->getRoot(), &step_bst) << endl;
       break;
       case 7: // Salvar dados em arquivo
-        
+        cout << "Digite 1 se deseja salvar em um arquivo bkp padronizado (dados/titles_output.csv) ou digite o caminho para o novo arquivo: ";
+        getline(cin, archivePath);
+        if(archivePath == "1"){
+          writeArchive(avl, "dados/titles_output.csv");
+        }else{
+          writeArchive(avl, archivePath);
+        }
       break;
       case 8: // Encerrar Programa
         delete values;

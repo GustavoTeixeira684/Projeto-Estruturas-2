@@ -10,6 +10,10 @@ void BstTree::print(){
   print(this->root, 0);
 }
 
+Column *BstTree::getColumn(){
+  return this->col;
+}
+
 int BstTree::getQntNodes(){
   return this->qntNodes;
 }

@@ -15,6 +15,10 @@ int AvlTree::getQntNodes(){
   return this->qntNodes;
 }
 
+Column *AvlTree::getColumn(){
+  return this->col;
+}
+
 void AvlTree::print(ProgramaNetflix *node, int space){
  	if (node != nullptr){	
     print(node->getRight(), space + 5);
