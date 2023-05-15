@@ -33,14 +33,13 @@ ProgramaNetflix *BstTree::getRoot(){
   return this->root;
 }
 
-int BstTree::getHeight(ProgramaNetflix *node, int *step){
+int BstTree::getHeight(ProgramaNetflix *node){
   int alturaEsquerda, alturaDireita;
-  (*step)++;
   if(node == nullptr){
     return -1;
   }
-  alturaEsquerda = getHeight(node->getLeft(), step);
-  alturaDireita = getHeight(node->getRight(), step);
+  alturaEsquerda = getHeight(node->getLeft());
+  alturaDireita = getHeight(node->getRight());
   return alturaEsquerda > alturaDireita ? alturaEsquerda + 1 : alturaDireita + 1;
 }
 

@@ -17,6 +17,7 @@ class ProgramaNetflix{
     string genres;
     string production_countries;
     float seasons;
+    string imdb_id;
     float imdb_score;
     float imdb_votes;
     float tmdb_popularity;

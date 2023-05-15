@@ -26,7 +26,7 @@ class BstTree{
     bool remove(string id, int *step);
     ProgramaNetflix *search(string id, int *step);
     ProgramaNetflix *search(string id, ProgramaNetflix *father);
-    int getHeight(ProgramaNetflix *node, int *step);
+    int getHeight(ProgramaNetflix *node);
 
 };
 

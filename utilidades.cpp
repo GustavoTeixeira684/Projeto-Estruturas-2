@@ -46,19 +46,6 @@ int stringCompare(string a, string b){ // 1 Se a for menor, -1 se b for menor e 
 	}
 }
 
-bool notNull(string texto){
-	
-	int index = 0;
-	if(tamanho(texto) > 0){
-		while(texto[index] != '\0'){
-			if(texto[index] != ' '){
-				return true;
-			}
-			index++;
-		}
-	}
-	return false;
-}
 void sortList(vector<float> *salario, vector<string> *nome){ // Função para ordenar os vetores com sincronismo
 	
 	float temp_salario;
@@ -144,13 +131,18 @@ string *dropIndex(string *values, int index, int length){
 	return values;
 }
 
-bool isNull(string *values, int length){
-	for(int i = 0; i < length; i++){
-		if(!notNull(values[i])){
-			return true;
+bool isNull(string values){
+	int i = 0;
+	if(tamanho(values) > 0){
+		while(values[i] != '\0'){
+			if(values[i] != ' '){
+				return false;
+			}
+			i++;
 		}
+		return true;
 	}
-	return false;
+	return true;
 }
 
 bool isNumber(string value){
@@ -163,3 +155,15 @@ bool isNumber(string value){
   }
   return true;
 }
+
+void fillEmpty(string *values, int *length){
+	for(int i = 0; i < *length; i++){
+		if(isNull(values[i])){
+			if(i == 4 || i == 6 || i == 9 || i > 10){
+				values[i] = "0";
+			}
+		}
+	}
+}
+
+

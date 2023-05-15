@@ -26,7 +26,7 @@ void AvlTree::print(ProgramaNetflix *node, int space){
 	 	  cout << " ";
     }
     int temp = 0;
-    cout << node->getId() << "[" << getBalance(node, &temp) << "]\n";
+    cout << node->getId() << "[" << getBalance(node) << "]\n";
     print(node->getLeft(), space+5);
   }
 }
@@ -50,34 +50,33 @@ ProgramaNetflix *AvlTree::search(string id, int *step){
   return aux;
 }
 
-ProgramaNetflix *AvlTree::search(string id, ProgramaNetflix *father){
-  ProgramaNetflix *aux = this->root;
-  int compare;
-  while( aux != nullptr && aux->getId() != id){
-    father = aux;
-    compare = stringCompare(id, aux->getId());
-    if(compare == -1){ // Valor procurado maior que o do nó atual
-      aux = aux->getRight();
-    }else if(compare == 1){ // Valor procurado menor que o do nó atual
-      aux = aux->getLeft();
-    }
-  }
-  return aux;
-}
+// ProgramaNetflix *AvlTree::search(string id, ProgramaNetflix *father){
+//   ProgramaNetflix *aux = this->root;
+//   int compare;
+//   while( aux != nullptr && aux->getId() != id){
+//     father = aux;
+//     compare = stringCompare(id, aux->getId());
+//     if(compare == -1){ // Valor procurado maior que o do nó atual
+//       aux = aux->getRight();
+//     }else if(compare == 1){ // Valor procurado menor que o do nó atual
+//       aux = aux->getLeft();
+//     }
+//   }
+//   return aux;
+// }
 
-int AvlTree::getHeight(ProgramaNetflix *node, int *step){
+int AvlTree::getHeight(ProgramaNetflix *node){
   int alturaEsquerda, alturaDireita;
-  (*step)++;
   if(node == nullptr){
     return -1;
   }
-  alturaEsquerda = getHeight(node->getLeft(), step);
-  alturaDireita = getHeight(node->getRight(), step);
+  alturaEsquerda = getHeight(node->getLeft());
+  alturaDireita = getHeight(node->getRight());
   return alturaEsquerda > alturaDireita ? alturaEsquerda + 1 : alturaDireita + 1;
 }
 
-int AvlTree::getBalance(ProgramaNetflix *node, int *step){
-  return getHeight(node->getRight(), step) - getHeight(node->getLeft(), step);
+int AvlTree::getBalance(ProgramaNetflix *node){
+  return getHeight(node->getRight()) - getHeight(node->getLeft());
 
 }
 
@@ -115,12 +114,12 @@ void AvlTree::rightRotate(ProgramaNetflix *node){
   temp = nullptr;
 }
 
-void AvlTree::balanceTree(ProgramaNetflix *node, int *step){
+void AvlTree::balanceTree(ProgramaNetflix *node){
   int nodeBalance;
   while(node != nullptr){
-    nodeBalance = getBalance(node, step);
+    nodeBalance = getBalance(node);
     if(nodeBalance > 1){
-      nodeBalance = getBalance(node->getRight(), step);
+      nodeBalance = getBalance(node->getRight());
       if(nodeBalance > 0){
         // Rotação simples à esquerda
         // cout << "Rotação simples à esquerda" << endl;
@@ -132,7 +131,7 @@ void AvlTree::balanceTree(ProgramaNetflix *node, int *step){
         leftRotate(node);
       }
     }else if(nodeBalance < -1){
-      nodeBalance = getBalance(node->getLeft(), step);
+      nodeBalance = getBalance(node->getLeft());
       if(nodeBalance < 0){
         // Rotação simples à direita
         // cout << "Rotação simples à direita" << endl;
@@ -145,7 +144,6 @@ void AvlTree::balanceTree(ProgramaNetflix *node, int *step){
       }
     }
     node = node->getFather();
-    (*step)++;
   }
 }
 
@@ -185,7 +183,7 @@ void AvlTree::insert(string *values, int *step){
     }
   }
   if(insert){
-    balanceTree(temp, step);
+    balanceTree(temp);
   }
   this->qntNodes++;
   aux = nullptr;
@@ -229,9 +227,9 @@ bool AvlTree::remove(string id, int *step){
     }
     delete(aux);
     if(newNode != nullptr){
-      balanceTree(newNode, step);
+      balanceTree(newNode);
     }else{
-      balanceTree(father, step);
+      balanceTree(father);
     }
     aux = nullptr;
     father = nullptr;
