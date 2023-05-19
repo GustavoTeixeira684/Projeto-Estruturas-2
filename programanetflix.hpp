@@ -28,6 +28,7 @@ class ProgramaNetflix{
 
   public:
     ProgramaNetflix();
+    ~ProgramaNetflix();
     ProgramaNetflix(string *values, ProgramaNetflix *father);
     ProgramaNetflix *getLeft();
     void setLeft(ProgramaNetflix *node);
@@ -36,6 +37,9 @@ class ProgramaNetflix{
     ProgramaNetflix *getFather();
     void setFather(ProgramaNetflix *node);
     string getId();
+    string getTitle();
+    string getType();
+    float getImdbScore();
     string *getValues();
     void updateValues(string *values);
     void printValue();

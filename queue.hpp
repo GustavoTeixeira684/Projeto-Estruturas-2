@@ -14,6 +14,8 @@ class Queue{
     
     public:
         Queue(int countOfItems);
+        ~Queue();
+        void clear();
         void push(string *values);
         void pop();
         string *front();

@@ -12,9 +12,13 @@ class BstTree{
     ProgramaNetflix *root;
     Column *col;
     int qntNodes;
+
+    void clear(ProgramaNetflix *node);
     
   public:
     BstTree();
+    ~BstTree();
+    void clear();
     ProgramaNetflix *getRoot();
     Column *getColumn();
     void insert(string *values, int *step);

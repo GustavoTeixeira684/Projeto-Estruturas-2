@@ -12,9 +12,12 @@ class AvlTree{
     ProgramaNetflix *root;
     Column *col;
     int qntNodes;
+    void clear(ProgramaNetflix *node);
     
   public:
     AvlTree();
+    ~AvlTree();
+    void clear();
     ProgramaNetflix *getRoot();
     Column *getColumn();
     void insert(string *values, int *step);

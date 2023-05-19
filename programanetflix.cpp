@@ -21,6 +21,10 @@ ProgramaNetflix::ProgramaNetflix(){
   this->right = nullptr;
 }
 
+ProgramaNetflix::~ProgramaNetflix(){
+  
+}
+
 ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){
   this->id = values[0];
   this->title = values[1];
@@ -107,6 +111,18 @@ void ProgramaNetflix::setFather(ProgramaNetflix *node){
 
 string ProgramaNetflix::getId(){
   return this->id;
+}
+
+string ProgramaNetflix::getTitle(){
+  return this->title;
+}
+
+string ProgramaNetflix::getType(){
+  return this->type;
+}
+
+float ProgramaNetflix::getImdbScore(){
+  return this->imdb_score;
 }
 
 void ProgramaNetflix::printValue(){

@@ -7,7 +7,15 @@ Queue::Queue(int countOfItems){
     this->countOfItems = countOfItems;
 }
 
+Queue::~Queue(){
+  this->clear();
+}
 
+void Queue::clear(){
+  while(this->size > 0){
+    this->pop();
+  }
+}
 
 void Queue::push(string *values){
     QueueNode *temp = new QueueNode(values, this->countOfItems);

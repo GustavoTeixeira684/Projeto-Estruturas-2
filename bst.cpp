@@ -6,6 +6,10 @@ BstTree::BstTree(){
   this->qntNodes = 0;
 }
 
+BstTree::~BstTree(){
+  this->clear();
+}
+
 void BstTree::print(){
   print(this->root, 0);
 }
@@ -80,6 +84,7 @@ void BstTree::insert(string *values, int *step){
   ProgramaNetflix *temp;
   int compare;
   if(aux == nullptr){
+    this->col = new Column();
     temp = new ProgramaNetflix(values, nullptr);
     this->root = temp;
     (*step)++;
@@ -167,4 +172,19 @@ void BstTree::insertColumns(string *values){
   Column *temp = new Column(values);
   this->col = temp;
   temp = nullptr;
+}
+
+void BstTree::clear(ProgramaNetflix *node){
+
+  if(node != nullptr){
+    clear(node->getLeft());
+    clear(node->getRight());
+    delete node;
+  }
+  
+}
+
+void BstTree::clear(){
+  clear(this->root);
+  col->clear();
 }

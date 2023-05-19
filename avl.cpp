@@ -6,6 +6,10 @@ AvlTree::AvlTree(){
   this->qntNodes = 0;
 }
 
+AvlTree::~AvlTree(){
+  this->clear();
+}
+
 void AvlTree::print(){
   print(this->root, 0);
   cout << endl;
@@ -153,6 +157,7 @@ void AvlTree::insert(string *values, int *step){
   bool insert = true;
   int compare;
   if(aux == nullptr){
+    this->col = new Column();
     temp = new ProgramaNetflix(values, nullptr);
     this->root = temp;
     (*step)++;
@@ -251,3 +256,17 @@ void AvlTree::insertColumns(string *values){
   temp = nullptr;
 }
 
+void AvlTree::clear(ProgramaNetflix *node){
+
+  if(node != nullptr){
+    clear(node->getLeft());
+    clear(node->getRight());
+    delete node;
+  }
+  
+}
+
+void AvlTree::clear(){
+  clear(this->root);
+  delete col;
+}

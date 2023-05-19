@@ -10,10 +10,10 @@ class Column{
 
   public:
   Column();
+  ~Column();
+  void clear();
   Column(string *values);
   string *getValues();
-  void clear();
-
 };
 
 #endif
