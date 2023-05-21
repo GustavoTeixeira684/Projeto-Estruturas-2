@@ -1,6 +1,6 @@
 #include "column.hpp"
 
-Column::Column(){
+Column::Column(){ // Construtor padrao. Insere valores padrao para a coluna
   this->values = new string[15];
   string valuesTemp[] = {"id","title","type","description","release_year","age_certification","runtime","genres","production_countries","seasons","imdb_id","imdb_score","imdb_votes","tmdb_popularity","tmdb_score"};
 
@@ -10,15 +10,15 @@ Column::Column(){
   
 }
 
-Column::~Column(){
+Column::~Column(){ // Destrutor
   this->clear();
 }
 
-void Column::clear(){
+void Column::clear(){ // Funcao para limpar a coluna
   delete[] this->values;
 }
 
-Column::Column(string *values){
+Column::Column(string *values){ // Construtor que recebe como parametro os valores que serao inseridos na coluna
   this->values = new string[15];
   for(int i = 0; i < 15; i++){
     this->values[i] = values[i];

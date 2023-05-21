@@ -1,11 +1,11 @@
 #include "queueNode.hpp"
 
-QueueNode::QueueNode(){
+QueueNode::QueueNode(){ // Construtor padrao
     this->values = nullptr;
     this->next = nullptr;
 }
 
-QueueNode::QueueNode(string *values, int length){
+QueueNode::QueueNode(string *values, int length){ // Construtor com parametros
     this->values = new string[length];
     for(int i = 0; i < length; i++){
         this->values[i] = values[i];
@@ -13,15 +13,16 @@ QueueNode::QueueNode(string *values, int length){
     this->next = nullptr;
 }
 
-QueueNode *QueueNode::getNext(){
+QueueNode *QueueNode::getNext(){ // Retorna o proximo item da fila
     return this->next;
 }
 
-void QueueNode::setNext(QueueNode *next){
+void QueueNode::setNext(QueueNode *next){ // Define o proximo item da fila
     this->next = next;
 }
 
-string *QueueNode::getValues(int length){
+string *QueueNode::getValues(int length){ // Retorna um vetor com os valores da fila
+     // Retorna um vetor temporario, pois como eh ponteiro, se a funcao que chamou esse metodo alterar o valor no vetor local, tambem altera na fila
     string *temp = nullptr;
     if(this->values != nullptr){
         temp= new string[length];

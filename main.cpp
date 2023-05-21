@@ -14,25 +14,27 @@ using namespace std;
 
 // ********** STRUCTS ********** //
 
-typedef struct {
+// Para nossas analises, criamos struct para nos dar suporte no agrupamento de valores/atributos
+
+typedef struct {  // Struct que armazena atributos/valores agrupados sobre o Elenco
   string codigo;
   string nome;
   int qnt;
 }Summarize;
 
-typedef struct{
+typedef struct{ // Struct que armazena o nome e a quantidade de filmes produzidos por pais.
   string nome;
   int qnt;
 }Country;
 
-typedef struct{
+typedef struct{ // Struct que armazena informações sobre os diretores e seus filmes produzidos
   string codigo;
   string nome;
   string filme;
   int qnt;
 }Director;
 
-typedef struct{
+typedef struct{ // Struct para armazenar dados estatisticos sobre os Scores das obras agrupados por decada
   int decade;
   float min;
   float max;
@@ -45,8 +47,8 @@ typedef struct{
 
 // ********** FILL FUNCTIONS ********** //
 
-template <typename T>
-void fillVector(ProgramaNetflix *node, vector<T*> *list){
+
+void fillVector(ProgramaNetflix *node, vector<string*> *list){ // Funçao para popular um vector string com as informaçoes contidas nas arvores
   if(node != nullptr){
     fillVector(node->getLeft(), list);
     list->push_back(node->getValues());
@@ -54,36 +56,29 @@ void fillVector(ProgramaNetflix *node, vector<T*> *list){
   }
 }
 
-void fillByType(ProgramaNetflix *node, vector<ProgramaNetflix*> *showList, vector<ProgramaNetflix*> *movieList){
-  if(node != nullptr){
+void fillByType(ProgramaNetflix *node, vector<ProgramaNetflix*> *showList, vector<ProgramaNetflix*> *movieList){ // Funçao para popular dois vectors contendo as obras que sao movies e que sao shows
+  // Sao gerados dois vectors para analise ao inves de popular um inteiro e procurar nesse vetor os dois tipos
+  // Dessa forma, ao fim da funcao, temos dois conjuntos de dados segmentados para trabalharmos na analise
+  if(node != nullptr){ // Utiliza o persurso in-order para popular os vectors
     fillByType(node->getLeft(), showList, movieList);
     string type = node->getType();
     float imdbScore = node->getImdbScore();
-    if(type == "SHOW" && imdbScore > 0){
-      showList->push_back(node);
-    }else if(type == "MOVIE" && imdbScore > 0){
-      movieList->push_back(node);
+    if(imdbScore > 0){ // Como nosso programa le todos os dados do arquivo e coloca 0 para os valores nulos, nao consideramos esses valores para as analises, pois usamos medidas estatisticas sensiveis
+      if(type == "SHOW"){ // Se for show
+        showList->push_back(node); // insere no vector que armazena as informaçoes dos shows
+      }else if(type == "MOVIE"){ // Se for Movie
+        movieList->push_back(node); // insere no vector que armazena as informaçoes dos movies
+      }
     }
     fillByType(node->getRight(), showList, movieList);
   }
 }
 
-
-void fillBst(BstTree *bst, AvlTree *avl, vector<string> *list){
-  string *values;
-  int length, step_bst, step_avl;
-  step_bst = 0;
-  step_avl = 0;
-  for(int i = 0; i < list->size(); i++){
-    values = strSplit(list->at(i), ';', &length);
-    fillEmpty(values, &length);
-    bst->insert(values, &step_bst);
-    avl->insert(values, &step_avl);
-  }
-  cout << "Passos Bst: " << step_bst << " com " << bst->getQntNodes() << " nós inseridos" << endl << "Passos Avl: " << step_avl << " com " << avl->getQntNodes() << " nós inseridos" << endl;
-}
-
-void fillDecade(ProgramaNetflix *node, vector<t_Decade*> *listDecades, vector<string*> *list){
+void fillDecade(ProgramaNetflix *node, vector<t_Decade*> *listDecades, vector<string*> *list){ // Funcao que armazena os valores da arvore em dois vectors
+  // O primeiro eh um vector de ponteiro da struct t_Decade, que armazena as informaçoes estatisticas das obras agrupadas por decada
+  // O segundo eh um vector que contem os dados da arvore. Utilizamos o mesmo para as analises posteriores
+  // Nao incluimos aqui pois essa funcao trabalha de forma recursiva, o que seria um problema incluindo duas etapas diferentes, mesmo que da mesma analise
+  // Apos essa funcao, o segundo vector eh usado para calculo do desvio padrao.
   if(node != nullptr){
     fillDecade(node->getLeft(), listDecades, list);
 
@@ -92,65 +87,66 @@ void fillDecade(ProgramaNetflix *node, vector<t_Decade*> *listDecades, vector<st
     int tempDecade;
     string *values;
     values = node->getValues();
-    if(stoi(values[4]) > 0){
-      tempDecade = stoi(values[4])/10;
-      verifier = false;
-      for(int i = 0; i < listDecades->size(); i++){
-        if(listDecades->at(i)->decade == tempDecade){
-          listDecades->at(i)->media += stof(values[11]);
-          listDecades->at(i)->count++;
-          if(stof(values[11]) > 0 && listDecades->at(i)->min > stof(values[11])){
+    if(stoi(values[4]) > 0){ // Se houver ano de lançamento preenchido
+      tempDecade = stoi(values[4])/10; // Captura a decada
+      verifier = false; // Seta a variavel que controla a inserçao como falsa
+      for(int i = 0; i < listDecades->size(); i++){ // Percorre o vector de struct
+        if(listDecades->at(i)->decade == tempDecade){ // Se a decada ja estiver preenchida no vector
+          listDecades->at(i)->media += stof(values[11]); // Incrementa o valor contido no node atual para calculo da media
+          listDecades->at(i)->count++; // Incrementa a quantidade de filmes da decada
+          if(stof(values[11]) > 0 && listDecades->at(i)->min > stof(values[11])){ // Atualiza o menor valor caso seja necessario
             listDecades->at(i)->min = stof(values[11]);
           }
-          if(listDecades->at(i)->max < stof(values[11])){
+          if(listDecades->at(i)->max < stof(values[11])){ // Atualiza o maior valor caso seja necessario
             listDecades->at(i)->max = stof(values[11]);
           }
-          verifier = true;
+          verifier = true; // Seta verifier como true, informando que a decada ja existe no vector e que o valor foi atualizado
         }
       }
-      if(!verifier){
-        temp = new t_Decade[1];
+      if(!verifier){ // Se a decada ainda nao existir no vector, verifier sera false
+        temp = new t_Decade[1]; // Cria novo objeto da struct e atribui os valores do programa a ele
         temp->count = 1;
         temp->decade = tempDecade;
         temp->max = stof(values[11]);
         temp->min = temp->max;
         temp->media = temp->min;
         temp->standard = 0;
-        listDecades->push_back(temp);
+        listDecades->push_back(temp); // Insere no vector
       }
     }
-    list->push_back(values);
+    list->push_back(values); // Insere as informacoes do node no segundo vector
 
     fillDecade(node->getRight(), listDecades, list);
   }
 }
 
-void fillCountry(ProgramaNetflix *node, vector<Country*> *listCountry){
+void fillCountry(ProgramaNetflix *node, vector<Country*> *listCountry){ // Funcao que percorre a arvore e adiciona os valores sobre os filmes agrupados por pais de producao
   if(node != nullptr){
     fillCountry(node->getLeft(), listCountry);
     bool verifier = false;
     int length;
     string *values, *vetCountry;
     Country *temp;
-    values = node->getValues();
-    if(values[8] != "" && values[8] != "[]"){
-      vetCountry = strSplit(clearChar(clearChar(clearChar(values[8], ' '), ']'), '['),',', &length);
-      for(int i = 0; i < length; i++){
-        verifier = false;
-        for(int j = 0; j < listCountry->size(); j++){
-          if(listCountry->at(j)->nome == vetCountry[i]){
-            listCountry->at(j)->qnt++;
-            verifier = true;
+    values = node->getValues(); // Pega os valores do node atual
+    if(values[8] != "" && values[8] != "[]"){ // Checa se ha de fato um pais de producao inscrito
+      vetCountry = strSplit(clearChar(clearChar(clearChar(values[8], ' '), ']'), '['),',', &length); // Limpa caracteres indesejados e quebra a coluna em um array para analise de cada caso
+      for(int i = 0; i < length; i++){ // Laço para percorrer os paises de producao do node atual
+        verifier = false; // Variavel booleana que controla a inserçao
+        for(int j = 0; j < listCountry->size(); j++){ // Laço para percorrer o vector de struct Country
+          if(listCountry->at(j)->nome == vetCountry[i]){ // se o pais ja estiver inserido no vector
+            listCountry->at(j)->qnt++; // Incrementa a quantidade
+            verifier = true; // Variavel setada como true para indicar que o pais ja existe na struct e foi atualizado
             break;
           }
         }
-        if(!verifier){
+        if(!verifier){ // Se o pais ainda nao existir na struct, insere
           temp = new Country[1];
           temp->nome = vetCountry[i];
           temp->qnt = 1;
           listCountry->push_back(temp);
         }
       }
+      // Limpa variaveis
       temp = nullptr;
       delete[] values;
       delete[] vetCountry;
@@ -159,12 +155,31 @@ void fillCountry(ProgramaNetflix *node, vector<Country*> *listCountry){
   }
 }
 
+void fillBst(BstTree *bst, AvlTree *avl, vector<string> *list){ // Funçao que le um vector e armazena os valores nas duas arvores utilizadas no programa
+  string *values;
+  int length, step_bst, step_avl;
+  step_bst = 0;
+  step_avl = 0;
+  for(int i = 0; i < list->size(); i++){ // Laço para percorrer o vector contendo as informaçoes lidas no titles.csv
+    values = strSplit(list->at(i), ';', &length); // Quebra a string em um array separando-as por ';'
+    fillEmpty(values, &length); // Preenche os valores nulos que vieram nas colunas numericas
+    bst->insert(values, &step_bst); // Insere na arvore bst
+    avl->insert(values, &step_avl); // Insere na arvore avl
+  }
+  cout << "Passos Bst: " << step_bst << " com " << bst->getQntNodes() << " nos inseridos" << endl << "Passos Avl: " << step_avl << " com " << avl->getQntNodes() << " nos inseridos" << endl; // Exibe informaçoes de passos realizados e quantidade de nodes nas arvores
+}
+
+
+
 // ********** END FILL FUNCTIONS ********** //
 
 // ********** SORT FUNCTIONS ********** //
 
 template <typename T>
-void sortStruct(vector<T*> **sample, int inferior, int superior){
+void sortStruct(vector<T*> **sample, int inferior, int superior){ // Funcao template para ordenar structs que possuem o atributo 'qnt'
+  // Ordenaçao baseada no algoritmo Mergesort. Pois eh um dos melhores algoritmos para ordenacao e trabalha sobre o conceito de dividir para conquistar
+  // Funcao utilizada para ordernar para apresentar a analise
+  // Como temos mais de um struct com o atributo qnt q ambos sao ordenados de forma decrescente, criamos uma funcao template para poder se utilizada em ambos os casos
   if(superior - inferior > 0){
     int meio, i, j, k;
     vector<T*> temp;    
@@ -199,7 +214,9 @@ void sortStruct(vector<T*> **sample, int inferior, int superior){
   }
 }
 
-void sortType(vector<ProgramaNetflix*> *list, int inferior, int superior){
+void sortType(vector<ProgramaNetflix*> *list, int inferior, int superior){ // Funcao de ordenacao para ordenar o vector de forma crescente a partir do IMDB Scorda
+  // Ordenacao tambem baseada no algoritmo MergeSort
+  // Funcao necessaria pois para o calculo de Outliers usando o metodo interquartil eh necessario que o vector esteja ordenado de forma crescente
     if(superior - inferior > 0){
     int meio, i, j, k;
     vector<ProgramaNetflix*> temp;    
@@ -234,7 +251,9 @@ void sortType(vector<ProgramaNetflix*> *list, int inferior, int superior){
   }
 }
 
-void sortDecade(vector<t_Decade*> *sample, int inferior, int superior){
+void sortDecade(vector<t_Decade*> *sample, int inferior, int superior){ // Funcao para ordenar o vector com as structs t_Decade de forma crescente por decada
+  // Funcao baseada no algoritmo de ordenacao MergeSort
+  // Necessario para exibicao para o usuario
   if(superior - inferior > 0){
     int meio, i, j, k;
     vector<t_Decade*> temp;    
@@ -271,82 +290,55 @@ void sortDecade(vector<t_Decade*> *sample, int inferior, int superior){
 
 // ********** END SORT FUNCTIONS ********** //
 
-void getOutlyerByType(AvlTree *avl, int option){
-  vector<ProgramaNetflix*> showList, movieList;
-  vector<ProgramaNetflix*> outlyerList;
-  int index;
-  float media, imdbScore, iqr, q1, q3;
-  fillByType(avl->getRoot(), &showList, &movieList);
-
-  // TIPO SHOW // 
-  sortType(&showList, 0, showList.size()-1);
-  q3 = showList.at(floor(showList.size() * 0.75))->getImdbScore();
-  q1 = showList.at(floor(showList.size() * 0.25))->getImdbScore();
-  iqr = q3 - q1;
-  cout << "\n\nTipo: SHOW";
-  for(int i = 0; i < showList.size(); i++){
-    if((option == 1 && showList.at(i)->getImdbScore() > (q3 + 1.5*iqr)) || (option == 0 && showList.at(i)->getImdbScore() < (q1 - 1.5*iqr))){
-      cout << "\n\tID: " << showList.at(i)->getId() << " Titulo: " << showList.at(i)->getTitle() << " IMDB Score: " << showList.at(i)->getImdbScore();
-    }
-  }
-
-  // TIPO MOVIE //
-  sortType(&movieList, 0, movieList.size()-1);
-  q3 = movieList.at(floor(movieList.size() * 0.75))->getImdbScore();
-  q1 = movieList.at(floor(movieList.size() * 0.25))->getImdbScore();
-  iqr = q3 - q1;
-  cout << "\n\nTipo: MOVIE";
-  for(int i = 0; i < movieList.size(); i++){
-    if((option == 1 && movieList.at(i)->getImdbScore() > (q3 + 1.5*iqr)) || (option == 0 && movieList.at(i)->getImdbScore() < (q1 - 1.5*iqr))){
-      cout << "\n\tID: " << movieList.at(i)->getId() << " Titulo: " << movieList.at(i)->getTitle() << " IMDB Score: " << movieList.at(i)->getImdbScore();
-    }
-  }
-
-  showList.clear();
-  movieList.clear();
-
-}
 
 // ********** MERGE FUNCTION ********** //
 
 
-void mergeCredits(AvlTree *avl, Queue *credits, Queue *finalQueue, vector<Summarize*> *elenco){
+void mergeCredits(AvlTree *avl, Queue *credits, Queue *finalQueue, vector<Summarize*> *elenco){ // Funcao que cruza a arvore com a base de creditos, gerando uma fila com os dados cruzados e constroi um vector de struct contendo elencos por filme.
+  // Nessa funçao utilizamos algumas tecnicas visando a otimizaçao
+  // 1 - Decidimos criar uma estrutura de dados Fila, pois em um cruzamento no estilo em que fizemos, uma das bvases eh percorrida por completo e a outra eh usada para encontrar a chave correspondente
+  // Com isso, utilizamos uma fila por conta da sua rapida insercao, remoçao e ser rapida para percorre-la no nosso cenario (Uma vez que apos o item ser checado ele pode ser removido).
+  // 2 - Analisando que a base de credito possui muitos registros com o id da obra repetido em sequencia, criamos um ponteiro temporario que ira armazenar o valor da ultima checagem
+  // Dessa forma, para casos repetidos e em sequencia, nao sera necessario percorrer a arvore novamente procurando o mesmo valor. Poupando tempo.
+  // 3 - Ainda visando os dados repetidos em sequencia, ao inserir os valores no vector de struct, percorremos o mesmo de tras para frente, assim em casos repetidos serao feitas bem menos comparaçoes
   ProgramaNetflix *temp = nullptr;
   Summarize *elencoTemp;
   string *valuesTitles, *valuesCredits, *valuesfinal;
   bool verifier = false;
-  valuesfinal = new string[19];
+  valuesfinal = new string[19]; // Inicia vetor que armazenada os valores cruzados e sera enviado para insercao na fila
   int step = 0;
-  while(credits->getSize() > 0){
+  while(credits->getSize() > 0){ // Laço que percorre toda a fila contendo os creditos
     verifier = false;
-    valuesCredits = credits->front();
-    if(temp == nullptr || temp->getId() != valuesCredits[1]){
-      temp = avl->search(valuesCredits[1], &step);
-      if(temp != nullptr){
-        valuesTitles = temp->getValues();
+    valuesCredits = credits->front(); // Pega o primeiro valor da fila
+    if(temp == nullptr || temp->getId() != valuesCredits[1]){ // Se o valor atual for diferente do checado anteriormente
+      temp = avl->search(valuesCredits[1], &step); // Procura o valor na rvore
+      if(temp != nullptr){ // se o valor for encontrado
+        valuesTitles = temp->getValues(); // Pega os valores da arvore para insercao na fila mais abaixo
       }
     }
-    if(temp != nullptr){
-      for(int i = 0; i < 15; i++){
+    if(temp != nullptr){ // Se o valor foi encontrado na arvore
+      for(int i = 0; i < 15; i++){ // Insere os campos da arvore
         valuesfinal[i] = valuesTitles[i];
       }
-      // Como são só quatro valores e sempre a mesma casa. Foi optado por escrever assim ao invés de abrir um laço for com condicional para evitar o indice 1 (Que eh o indice do id que sera repitido se for inserido)
-      valuesfinal[15] = valuesCredits[0];
+      // Como sao so quatro valores e sempre a mesma casa. Foi optado por escrever assim ao inves de abrir um laço for com condicional para evitar o indice 1 (Que eh o indice do id que sera repitido se for inserido)
+      valuesfinal[15] = valuesCredits[0]; // Insere os campos da base de creditos
       valuesfinal[16] = valuesCredits[2];
       valuesfinal[17] = valuesCredits[3];
       valuesfinal[18] = valuesCredits[4];
-      finalQueue->push(valuesfinal);
-      if(elenco != nullptr){
+      finalQueue->push(valuesfinal); // Insere na fila com os dados finais
+
+      // Bloco da funcao para armazenar os dados em um vector de Struct para apresentar informaçoes sumarizadas para o usuario
+      if(elenco != nullptr){ // Se o valor foi encontrado na arvore
         if(!elenco->empty()){
-            for(int i = elenco->size() - 1; i >= 0; i--){
-              if(elenco->at(i)->codigo == valuesfinal[0]){
-                elenco->at(i)->qnt++;
+            for(int i = elenco->size() - 1; i >= 0; i--){ // Percorre a struct de forma inversa
+              if(elenco->at(i)->codigo == valuesfinal[0]){ // Se o filme ja estiver sido inserido no vector
+                elenco->at(i)->qnt++; // atualiza a quantidade de membror do elenco
                 verifier = true;
                 break;
               }
             }
           }
-          if(!verifier){
+          if(!verifier){ // Se o filme ainda nao existir no vecotr, insere.
             elencoTemp = new Summarize[1];
             elencoTemp->codigo = valuesfinal[0];
             elencoTemp->nome = valuesfinal[1];
@@ -356,10 +348,10 @@ void mergeCredits(AvlTree *avl, Queue *credits, Queue *finalQueue, vector<Summar
         }  
       }
         
-    credits->pop();
+    credits->pop(); // Apaga o primeiro item da fila de creditos, partindo para a proxima analise
   }
   if(elenco != nullptr){
-    sortStruct(&elenco, 0, elenco->size()-1);
+    sortStruct(&elenco, 0, elenco->size()-1); // Ordena o vector de struct para exibicao ao usuario
   }
 }
 
@@ -368,102 +360,107 @@ void mergeCredits(AvlTree *avl, Queue *credits, Queue *finalQueue, vector<Summar
 // ********** READ & WRITE FUNCTIONS********** //
 
 
-void readCredits(Queue *credits, string path){
-  ifstream file;
-  vector<string> list;
-  string result, values, *input;
-  int length;
-  file.open(path);
-  if(!file.fail()){
-    getline(file, result, '\n'); // Pulando o cabeçalho
+void readCredits(Queue *credits, string path){ // Funçao para ler o arquivo de creditos
+  ifstream file;                  // Objeto para leitura de arquivo
+  vector<string> list;            // Vetor para armazenar linhas do arquivo
+  string result, values, *input;   // Variaveis auxiliares
+  int length;                     // Variavel para armazenar o comprimento do array
+  file.open(path);                // Abre o arquivo especificado pelo caminho 'path'
+  
+  if(!file.fail()){               // Verifica se a abertura do arquivo foi bem-sucedida
+    getline(file, result, '\n');   // Le e descarta a linha de cabeçalho
     int k = 0;
-    while(file.peek() != EOF){
-      values = "";
-      for(int i = 0; i < 4; i++){
-        getline(file, result, ';');
-        values += result + ";";
-
+    while(file.peek() != EOF){    // Enquanto nao chegar ao final do arquivo
+      values = "";                // Reinicia a variavel 'values' para cada linha do arquivo
+      for(int i = 0; i < 4; i++){ // Realiza um loop quatro vezes para obter quatro valores separados por ';'
+        getline(file, result, ';');  // Le cada valor separado por ';'
+        values += result + ";";      // Concatena o valor à string 'values' seguido por ';'
       }
-      getline(file, result, '\n');
-      values += result;
-      input = strSplit(values, ';', &length);
-      credits->push(input);
+      getline(file, result, '\n');  // Le o ultimo valor da linha, terminado por '\n'
+      values += result;             // Concatena o ultimo valor à string 'values'
+      input = strSplit(values, ';', &length);  // Divide a string 'values' em um array de strings usando ';' como separador
+      credits->push(input);         // Insere o array de strings na fila 'credits'
       k++;
     }
   }
 }
 
-void readArchive(BstTree *bst, AvlTree *avl, string path){ // Função para ler o arquivo
-  ifstream file;
-  int count, length;
-  char sep;
-  string result, values, *joj;
-  vector<string> lista;
-  file.open(path);
-  if(!file.fail()){
-    getline(file, result, '\n');
+void readArchive(BstTree *bst, AvlTree *avl, string path) { // Funçao para ler o arquivo
+  ifstream file; // Declaraçao do objeto ifstream para ler o arquivo
+  int count, length; // Variaveis para armazenar o numero de colunas e o comprimento
+  char sep; // Caractere separador
+  string result, values, *joj; // Strings para armazenar resultados intermediarios
+  vector<string> lista; // Vetor para armazenar as linhas do arquivo
+  file.open(path); // Abre o arquivo especificado pelo caminho 'path'
+
+  if (!file.fail()) { // Verifica se a abertura do arquivo foi bem-sucedida
+    getline(file, result, '\n'); // Le a primeira linha do arquivo e armazena em 'result'
+
+    // Insere as colunas nas arvores bst e avl
     bst->insertColumns(strSplit(result, ';', &length));
     avl->insertColumns(strSplit(result, ';', &length));
+
     int k = 0;
-    while(file.peek() != EOF){
+    while (file.peek() != EOF) { // Enquanto nao atingir o final do arquivo
       values = "";
-      for(int i = 0; i < 14; i++){
+      for (int i = 0; i < 14; i++) { // Le 14 valores separados por ponto e virgula (;)
         file.get(sep);
-        if(sep != ';'){
+        if (sep != ';') {
           getline(file, result, ';');
           values += sep + result + ";";
-        }else{
+        } else {
           values += ";";
         }
       }
-      getline(file, result, '\n');
+      getline(file, result, '\n'); // Le o restante da linha ate o caractere de nova linha (\n)
       values += result;
-      lista.push_back(values);
+      lista.push_back(values); // Adiciona a linha ao vetor 'lista'
       k++;
     }
   }
-  fillBst(bst, avl, &lista);
-  lista.clear();
+
+  fillBst(bst, avl, &lista); // Preenche as arvores bst e avl com os valores do vetor 'lista'
+  lista.clear(); // Limpa o vetor 'lista' apos o preenchimento
 }
 
-void writeArchive(AvlTree *avl, string path){
-  ofstream fout(path);
-  vector<string*> list;
-  string *values = avl->getColumn()->getValues();
-  fillVector(avl->getRoot(), &list);
-  for(int i = 0; i < 14; i++){
-    fout << values[i] << ";";
+void writeArchive(AvlTree *avl, string path){ // Funçao para gravar os dados da arvore em um arquivo
+  ofstream fout(path); // Abre o arquivo para escrita
+  vector<string*> list; // Declara um vetor de ponteiros para strings
+  string *values = avl->getColumn()->getValues(); // Obtem os valores da coluna da arvore AVL
+  fillVector(avl->getRoot(), &list); // Preenche o vetor 'list' com os valores da arvore AVL
+  for(int i = 0; i < 14; i++){ // Loop para escrever os valores das colunas separados por ';'
+    fout << values[i] << ";"; // Escreve o valor da coluna seguido por ';'
   }
-  fout << values[14] << "\n";
+  fout << values[14] << "\n"; // Escreve o ultimo valor da coluna e quebra de linha
   
-  for(int i = 0; i < list.size(); i++){
-    for(int j = 0; j < 14; j++){
-      fout << list.at(i)[j] << ";";
+  for(int i = 0; i < list.size(); i++){ // Loop para percorrer os elementos do vetor 'list'
+    for(int j = 0; j < 14; j++){ // Loop para escrever os valores dos elementos separados por ';'
+      fout << list.at(i)[j] << ";"; // Escreve o valor do elemento seguido por ';'
     }
-    fout << list.at(i)[14] << "\n";
+    fout << list.at(i)[14] << "\n"; // Escreve o ultimo valor do elemento e quebra de linha
   }
 
-  // delete values;
-  values = nullptr;
-  
+  delete[] values;
+  values = nullptr; // Define o ponteiro 'values' como nulo
 }
 
-void writeMerged(Queue *lista, string path, string *columns){
-  ofstream fout(path);
-  string *values;
+void writeMerged(Queue *lista, string path, string *columns) { // Funçao para gravas os dados cruzados entre titles e credits em um arquivo
+  ofstream fout(path); // Cria um objeto de fluxo de saida para o arquivo especificado por 'path'
+  string *values; // Declara um ponteiro para uma string chamado 'values'
+  
   // Gravando colunas
-  for(int i = 0; i < 15; i++){
-    fout << columns[i] << ";";
+  for(int i = 0; i < 15; i++){ // Loop para gravar as colunas
+    fout << columns[i] << ";"; // Escreve o valor de 'columns[i]' seguido por um ponto e virgula no arquivo
   }
-  fout << "actor_id;name;character;role"<<endl;
+  fout << "actor_id;name;character;role" << endl; // Escreve a string "actor_id;name;character;role" no arquivo
 
-  while(lista->getSize() > 0){
-    values = lista->front();
-    for(int i = 0; i < 18; i++){
-      fout << values[i] << ";";
+  while(lista->getSize() > 0){ // Loop enquanto a fila nao estiver vazia
+    values = lista->front(); // Obtem o primeiro conjunto de valores da fila e atribui a 'values'
+    for(int i = 0; i < 18; i++){ // Loop para iterar sobre os valores em 'values'
+      fout << values[i] << ";"; // Escreve o valor de 'values[i]' seguido por um ponto e virgula no arquivo
     }
-    fout << values[18] << endl;
-    lista->pop();
+    fout << values[18] << endl; // Escreve o ultimo valor de 'values' no arquivo, seguido por uma nova linha
+    lista->pop(); // Remove o primeiro elemento da fila
   }
 }
 
@@ -471,85 +468,153 @@ void writeMerged(Queue *lista, string path, string *columns){
 
 // ********** ANALYTICAL FUNCTIONS ********** //
 
-void getDirectorMovie(AvlTree *avl, vector<Director*> *director){
-  bool verifier = false;
-  string *values;
-  // vector<Director*> *director = new vector<Director*>();
-  Director *temp;
-  Queue *credits = new Queue(5);
-  Queue *finalCredits = new Queue(19);
-  readCredits(credits, "dados/credits.csv");
-  mergeCredits(avl, credits, finalCredits, nullptr);
-  delete credits;
-  while(finalCredits->getSize() > 0){
-    verifier = false;
-    values = finalCredits->front();
-    if(values[18] == "DIRECTOR"){
-      if(director->size() > 0){
-        for(int i = 0; i < director->size(); i++){
-          if(director->at(i)->codigo == values[15]){
-            director->at(i)->qnt++;
-            director->at(i)->filme += "\n\t" + values[1];
-            verifier = true;
-            break;
+void getOutlierByType(AvlTree *avl, int option) { // Funcao para pegar Outliers em cada um dos tipos de programa netflix
+  // Option 1 eh para encontrar programas com a nota acima do comum e 0 para abaixo
+
+  vector<ProgramaNetflix*> showList, movieList; // Vetores para armazenar programas de TV e filmes
+  vector<ProgramaNetflix*> OutlierList; // Vetor para armazenar os programas "outliers"
+  int index;
+  float media, imdbScore, iqr, q1, q3;
+  fillByType(avl->getRoot(), &showList, &movieList); // Preenche os vetores showList e movieList com os programas de TV e filmes
+
+  // TIPO SHOW // 
+
+  sortType(&showList, 0, showList.size()-1); // Ordena o vetor showList com base no IMDB Score
+  q3 = showList.at(floor(showList.size() * 0.75))->getImdbScore(); // Calcula o terceiro quartil do IMDB Score
+  q1 = showList.at(floor(showList.size() * 0.25))->getImdbScore(); // Calcula o primeiro quartil do IMDB Score
+  iqr = q3 - q1; // Calcula a amplitude interquartil (IQR)
+  cout << "\n\nTipo: SHOW";
+  for(int i = 0; i < showList.size(); i++) {
+    // Verifica se o programa e um "outlier" com base na opçao e no IMDB Score
+    if((option == 1 && showList.at(i)->getImdbScore() > (q3 + 1.5*iqr)) || (option == 0 && showList.at(i)->getImdbScore() < (q1 - 1.5*iqr))) {
+      cout << "\n\tID: " << showList.at(i)->getId() << " Titulo: " << showList.at(i)->getTitle() << " IMDB Score: " << showList.at(i)->getImdbScore();
+    }
+  }
+
+  // TIPO MOVIE //
+
+  sortType(&movieList, 0, movieList.size()-1); // Ordena o vetor movieList com base no IMDB Score
+  q3 = movieList.at(floor(movieList.size() * 0.75))->getImdbScore(); // Calcula o terceiro quartil do IMDB Score
+  q1 = movieList.at(floor(movieList.size() * 0.25))->getImdbScore(); // Calcula o primeiro quartil do IMDB Score
+  iqr = q3 - q1; // Calcula a amplitude interquartil (IQR)
+  cout << "\n\nTipo: MOVIE";
+  for(int i = 0; i < movieList.size(); i++) {
+    // Verifica se o programa e um "outlier" com base na opçao e no IMDB Score
+    if((option == 1 && movieList.at(i)->getImdbScore() > (q3 + 1.5*iqr)) || (option == 0 && movieList.at(i)->getImdbScore() < (q1 - 1.5*iqr))) {
+      cout << "\n\tID: " << movieList.at(i)->getId() << " Titulo: " << movieList.at(i)->getTitle() << " IMDB Score: " << movieList.at(i)->getImdbScore();
+    }
+  }
+
+  showList.clear(); // Limpa o vetor showList
+  movieList.clear(); // Limpa o vetor movieList
+}
+
+
+void getDirectorMovie(AvlTree *avl, vector<Director*> *director) { // Funçao para encontrar e agrupar os filmes por diretor
+  // Da forma como construimos, ele armazena na lista de diretores os dados do diretor e controi uma string com todos os filmes que o diretor participou
+
+  bool verifier = false; // Variavel para verificar se o diretor ja existe na lista
+  string *values; // Ponteiro para armazenar os valores da fila
+  Director *temp; // Ponteiro temporario para um diretor
+  Queue *credits = new Queue(5); // Criaçao de uma fila chamada "credits" com capacidade 5
+  Queue *finalCredits = new Queue(19); // Criaçao de uma fila chamada "finalCredits" com capacidade 19
+  readCredits(credits, "dados/credits.csv"); // Leitura dos creditos de um arquivo e armazenamento na fila "credits"
+  mergeCredits(avl, credits, finalCredits, nullptr); // Mescla os creditos da fila "credits" com a arvore AVL
+  delete credits; // Libera a memoria ocupada pela fila "credits"
+
+  while(finalCredits->getSize() > 0) { // Enquanto a fila "finalCredits" nao estiver vazia
+    verifier = false; // Reinicializa a variavel "verifier" como falsa
+    values = finalCredits->front(); // Obtem o primeiro elemento da fila "finalCredits" e armazena em "values"
+
+    if(values[18] == "DIRECTOR") { // Verifica se o valor na posiçao 18 de "values" e "DIRECTOR"
+      if(director->size() > 0) { // Verifica se o vetor de diretores nao esta vazio
+        for(int i = 0; i < director->size(); i++) { // Percorre o vetor de diretores
+          if(director->at(i)->codigo == values[15]) { // Verifica se o codigo do diretor atual e igual ao valor na posiçao 15 de "values"
+            director->at(i)->qnt++; // Incrementa a quantidade de filmes do diretor atual
+            director->at(i)->filme += "\n\t" + values[1]; // Adiciona o nome do filme atual à lista de filmes do diretor
+            verifier = true; // Define a variavel "verifier" como verdadeira para indicar que o diretor foi encontrado
+            break; // Sai do loop
           }
         }
       }
-      
-      if(!verifier){
-        temp = new Director[1];
-        temp->codigo = values[15];
-        temp->nome = values[16];
-        temp->filme = values[1];
-        temp->qnt = 1;
-        director->push_back(temp);
+
+      if(!verifier) { // Se o diretor nao foi encontrado na lista
+        temp = new Director[1]; // Aloca memoria para um novo objeto Diretor
+        temp->codigo = values[15]; // Define o codigo do diretor
+        temp->nome = values[16]; // Define o nome do diretor
+        temp->filme = values[1]; // Define o primeiro filme do diretor
+        temp->qnt = 1; // Define a quantidade de filmes como 1
+        director->push_back(temp); // Adiciona o diretor ao vetor de diretores
       }
     }
-    finalCredits->pop();
+    finalCredits->pop(); // Remove o primeiro elemento da fila "finalCredits"
   }
-  sortStruct(&director, 0, director->size()-1);
+
+  sortStruct(&director, 0, director->size()-1); // Ordena o vetor de diretores com base no codigo
 }
 
-void getDataByDecade(AvlTree *avl){
-  float tempStandard;
-  vector<string*> *list = new vector<string*>();
-  vector<t_Decade*> *listDecades = new vector<t_Decade*>();
-  fillDecade(avl->getRoot(), listDecades, list);
-  for(int i = 0; i < listDecades->size(); i++){
+void getDataByDecade(AvlTree *avl) { // Funçao que pega dados estatisticos agrupados por decada
+  float tempStandard; // Variavel temporaria para calculo do desvio padrao
+  vector<string*> *list = new vector<string*>(); // Vetor dinamico para armazenar os dados
+  vector<t_Decade*> *listDecades = new vector<t_Decade*>(); // Vetor dinamico para armazenar as decadas calculadas
+  fillDecade(avl->getRoot(), listDecades, list); // Preenche os vetores com as decadas e os dados correspondentes
+
+  // Itera sobre as decadas calculadas
+  for(int i = 0; i < listDecades->size(); i++) {
     tempStandard = 0;
+
+    // Calcula a media da decada atual
     listDecades->at(i)->media /= listDecades->at(i)->count;
-    for(int j = 0; j < list->size(); j++){
-      if(stoi(list->at(j)[4])/10 == listDecades->at(i)->decade){
+
+    // Itera sobre os dados
+    for(int j = 0; j < list->size(); j++) {
+      // Verifica se o dado pertence à decada atual
+      if(stoi(list->at(j)[4])/10 == listDecades->at(i)->decade) {
+        // Calcula o valor do desvio padrao
         tempStandard += pow(stof(list->at(j)[11]) - listDecades->at(i)->media, 2);
       }
     }
+
+    // Calcula o desvio padrao da decada atual
     listDecades->at(i)->standard = sqrt(tempStandard / listDecades->at(i)->count);
   }
+
+  // Ordena as decadas em ordem crescente
   sortDecade(listDecades, 0, listDecades->size()-1);
-  for(int i = 0; i < listDecades->size(); i++){
-    if(listDecades->at(i)->media > 0){
-        std::cout << std::fixed << std::setprecision(2);
-        cout << "\n\nDecada: " << listDecades->at(i)->decade << "0\n\tMedia: " << listDecades->at(i)->media << "\n\tMenor Valor: " << listDecades->at(i)->min;
-        cout << "\n\tMaior Valor: " << listDecades->at(i)->max << "\n\tDesvio Padrao: " << listDecades->at(i)->standard; 
-      }
+
+  // Itera sobre as decadas para exibir os resultados
+  for(int i = 0; i < listDecades->size(); i++) {
+    if(listDecades->at(i)->media > 0) {
+      std::cout << std::fixed << std::setprecision(2);
+      cout << "\n\nDecada: " << listDecades->at(i)->decade << "0\n\tMedia: " << listDecades->at(i)->media << "\n\tMenor Valor: " << listDecades->at(i)->min;
+      cout << "\n\tMaior Valor: " << listDecades->at(i)->max << "\n\tDesvio Padrao: " << listDecades->at(i)->standard; 
+    }
   }
 
+  // Limpa os vetores e libera a memoria alocada dinamicamente
   listDecades->clear();
   list->clear();
   delete listDecades;
   delete list;
-
 }
 
 
 void getTitlePerCountry(AvlTree *avl){
+  // Cria um novo vetor dinâmico para armazenar os paises
   vector<Country*> *listCountry = new vector<Country*>();
+
+  // Preenche o vetor com os paises presentes na arvore AVL agrupados
   fillCountry(avl->getRoot(), listCountry);
+
+  // Ordena o vetor de paises agrupados de forma decrescente para exibiçao
   sortStruct(&listCountry, 0, listCountry->size()-1);
 
+  // Itera sobre cada pais no vetor e imprime o nome e a quantidade correspondente
   for(int i = 0; i < listCountry->size(); i++){
     cout << "Nome: " << listCountry->at(i)->nome << " Quantidade: " << listCountry->at(i)->qnt << endl;
   }
+
+  // Limpa o vetor e libera a memoria alocada
   listCountry->clear();
   delete listCountry;
 }
@@ -562,18 +627,18 @@ int main() {
   ProgramaNetflix *temp;vector<Director*> *director = new vector<Director*>();
   BstTree *bst = new BstTree(); // Objeto do tipo Arvore BST
   AvlTree *avl = new AvlTree(); // Objeto do tipo Arvore AVL
-  Queue *credits, *finalQueue;
-  vector<Summarize*> elenco;
-  credits = new Queue(5);
-  finalQueue = new Queue(19);
+  Queue *credits, *finalQueue; // Filas utilizadas para lidar com a base de creditos e a base cruzada
+  vector<Summarize*> elenco; // Vector que armazena o elenco
+  credits = new Queue(5); // Inicia a Fila Credits com 5 colunas
+  finalQueue = new Queue(19); // Inicia a Fila finalQueue com 19 colunas
   int option = -1, step_bst, step_avl; // Variavel que armazena a opcao do usuario
   string input, archivePath, id, *values = nullptr; // Variavel que contem o caminho do arquivo para ler
 
   cout << "Bem vindo ao programa de Analise/Ciencia de dados com Arvores BST e AVL\n\n";
   cout << "Desenvolvedores:\n\tGustavo Teixeira dos Santos  TIA 32197020\n\tCleverson Pereira da Silva  TIA 32198531\n\tVictor Junqueira  TIA 42123712\n\tFelipe Nakandakari  TIA 42104701\n\tPedro Catarino  TIA 42105951\n\n";
   
-  while(option != 8){
-    cout << "\n\nO que deseja:\n\t1 - Ler dados de arquivo\n\t2 - Opcoes de Analise\n\t3 - Inserir Programa\n\t4 - Buscar Programa\n\t5 - Remover Programa\n\t6 - Exibir a Altura das Árvores\n\t7 - Salvar dados em arquivo\n\t8 - Encerrar Programa\nEscolha: ";
+  while(option != 8){ // Itera ate o usuario digitar 8 = encerrar programa
+    cout << "\n\nO que deseja:\n\t1 - Ler dados de arquivo\n\t2 - Opcoes de Analise\n\t3 - Inserir Programa\n\t4 - Buscar Programa\n\t5 - Remover Programa\n\t6 - Exibir a Altura das arvores\n\t7 - Salvar dados em arquivo\n\t8 - Encerrar Programa\nEscolha: ";
     cin >> option;
     switch(option){
       case 1: // Ler dados de arquivo
@@ -589,22 +654,23 @@ int main() {
       break;
       case 2: // Opcoes de Analise
         if(avl->getRoot() != nullptr){
-          cout << "Qual analise dejesa:\n\t1 - 20 filmes com os maiores elencos\n\t2 - Titulos com o IMDB Score acima do comum\n\t3 - Filmes por Diretor (para diretores com mais de um filme) ";
-          cout << "\n\t4 - Dados estatísticos sobre as decadas\n\t5 - Quantidade de filmes por pais\nEscolha: ";
+          cout << "Qual analise dejesa:\n\t1 - 20 filmes com os maiores elencos\n\t2 - Titulos com o IMDB Score acima ou abaixo do comum\n\t3 - Filmes por Diretor (para diretores com mais de um filme) ";
+          cout << "\n\t4 - Dados estatisticos sobre as decadas\n\t5 - Quantidade de filmes por pais\nEscolha: ";
           cin >> option;
           switch(option){
-            case 1:
-              readCredits(credits, "dados/credits.csv");
-              mergeCredits(avl, credits, finalQueue, &elenco);
+            case 1: // Opçao para exibir os 20 filmes com os maiores elencos
+              readCredits(credits, "dados/credits.csv"); // Le os creditos
+              mergeCredits(avl, credits, finalQueue, &elenco); // Cruza os dados com a arvore
               cout << "\nRelacao de elenco por titulo em ordem crescente:\n\n";
               cout << "Id titulo | Nome titulo | Quantidade pessoas no Elenco\n";
-              for(int i = 0; i < 20; i++){
+              for(int i = 0; i < 20; i++){ // Exibe os 20 maiores para o usuario
                 cout << "\t" << elenco.at(i)->codigo << "|" << elenco.at(i)->nome << "|" << elenco.at(i)->qnt << endl;
               }
 
+              // Pergunta se o usuario deseja que seja gerada uma base com os dados cruzados
               cout << "\n\nUma base consolidada foi gerada a partir do cruzamento de titulos e creditos. Deseja salvar? (1 para sim e 0 para nao): ";
               cin >> option;
-              if(option == 1){
+              if(option == 1){ // Caso o usuario queira, grava o arquivo
                 getchar();
                 cout << "Digite o caminho para onde deseja salvar o arquivo: ";
                 getline(cin, input);
@@ -613,20 +679,21 @@ int main() {
               elenco.clear();
 
             break;
-            case 2:
+            case 2: // Titulos com o IMDB Scorde acima ou abaixo do comum
               cout << "Digite 1 para acima do comum e 0 para abaixo do comum: ";
               cin >> option;
-              getOutlyerByType(avl, option);
+              getOutlierByType(avl, option); // Chama funçao que exibe os outliers por tipo de show
             break;
-            case 3:
-              getDirectorMovie(avl, director);
+            case 3: // Filmes por Diretor
+              getDirectorMovie(avl, director); // Chama funçao que retorna os filmes que os diretores fizeram
               cout << "Codigo | Nome | Quantidade\n";
               for(int i = 0; i < director->size(); i++){
-                if(director->at(i)->qnt > 1){
+                if(director->at(i)->qnt > 1){ // Exibe a lista
                   cout << director->at(i)->codigo << " | " << director->at(i)->nome << " | " << director->at(i)->qnt << endl;
                 }
               }
               getchar();
+              // Permite com que o usuario digite o codigo de algum diretor para visualizar todos os filmes que ele fez
               while(input != "n"){
                 cout << "\nDigite o codigo de um diretor para ver os filmes que ele produziu (ou digite n para pular): ";
                 getline(cin, input);
@@ -639,11 +706,11 @@ int main() {
                 }
               }
             break;
-            case 4:
-              getDataByDecade(avl);
+            case 4: // Dados estatisticos por decada
+              getDataByDecade(avl); // Chama funcao que exibe os dados estatisticos por decada
             break;
-            case 5:
-              getTitlePerCountry(avl);
+            case 5: // Quantidade de filmes por pais
+              getTitlePerCountry(avl); // Chama funcao que exibe a quantidade de filmes por pais em ordem decrescente
             break;
           }
         }else{
@@ -651,7 +718,7 @@ int main() {
         }
       break;
       case 3: // Inserir Programa
-        values = new string[15];
+        values = new string[15]; // Pega os valores para inserir
         getchar();
         cout << "Digite o ID: ";
         getline(cin, values[0]);
@@ -685,9 +752,9 @@ int main() {
         getline(cin, values[14]);
         step_bst = 0;
         step_avl = 0;
-        avl->insert(values, &step_avl);
-        bst->insert(values, &step_bst);
-        cout << "Titulo inserido!\n\tQuantidade de passos BST: " << step_bst << "\n\tQuantidade de passos AVL: " << step_avl << endl;
+        avl->insert(values, &step_avl); // Insere os valores na avl
+        bst->insert(values, &step_bst); // Insere os valores na bst
+        cout << "Titulo inserido!\n\tQuantidade de passos BST: " << step_bst << "\n\tQuantidade de passos AVL: " << step_avl << endl; // Exibe quantidade de passos realizados para a inserçao
         delete[] values;
         values = nullptr;
       break;
@@ -698,7 +765,7 @@ int main() {
         step_bst = 0;
         step_avl = 0;
         temp = avl->search(id, &step_avl); // Ja que as duas arvores estao sincronizadas, so eh necessario um dos dois valores para exibir os resultadosdo Programa na tela
-        if(bst->search(id, &step_bst) != nullptr){
+        if(bst->search(id, &step_bst) != nullptr){ // Se o valor existir nas arvores, exibe os dados do programa
           temp->printValue();
         }else{
           cout << "\n\nValor nao encontrado!\n";
@@ -712,11 +779,11 @@ int main() {
         getline(cin, id);
         step_bst = 0;
         step_avl = 0;
-        if(bst->remove(id, &step_bst) && avl->remove(id, &step_avl)){
+        if(bst->remove(id, &step_bst) && avl->remove(id, &step_avl)){ // Se o programa foi encontrado e removido, exibe mensagem de sucesso e a quantidade de passos necessarios
           cout << "\nExcluido com sucesso!";
           cout << "\nQuantidade de passos da para remocao:\n\tAVL: " << step_avl << "\n\tBST: " << step_bst << endl;
-        }else{
-          cout << "\nValor nao encontrado!" << endl;
+        }else{ // Caso contrario
+          cout << "\nValor nao encontrado!" << endl; // Exibe mensagem informando que nao foi possivel
         }
       break;
       case 6: // Exibir altura das Arvores
@@ -741,7 +808,7 @@ int main() {
         delete values; // Limpar vetor de valores
         values = nullptr;
       break;
-      default: // Caso o usuário selecione outros valores
+      default: // Caso o usuario selecione outros valores
         cout << "\n\nPor favor, Digite um valor valido!!\n\n";
       break;
     }

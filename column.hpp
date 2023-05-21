@@ -3,17 +3,18 @@
 #include <iostream>
 using namespace std;
 
+// Classe que armazena a coluna do arquivo que foi lido pela arvore
 class Column{
 
   private:
-    string *values;
+    string *values; // Ponteiro para vetor que contem os valores
 
   public:
-  Column();
-  ~Column();
-  void clear();
-  Column(string *values);
-  string *getValues();
+  Column(); // Construtor padrao
+  ~Column(); // Destrutor Padrao
+  void clear(); // Limpa o objeto
+  Column(string *values); // Construtor que recebe como parametro os valores que serao inseridos na classe
+  string *getValues(); // Retorna os valores da coluna
 };
 
 #endif

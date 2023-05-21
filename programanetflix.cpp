@@ -1,6 +1,6 @@
 #include "programanetflix.hpp"
 
-ProgramaNetflix::ProgramaNetflix(){
+ProgramaNetflix::ProgramaNetflix(){ // Construtor Padrao
   this->id = "";
   this->title = "";
   this->type = "";
@@ -21,11 +21,11 @@ ProgramaNetflix::ProgramaNetflix(){
   this->right = nullptr;
 }
 
-ProgramaNetflix::~ProgramaNetflix(){
+ProgramaNetflix::~ProgramaNetflix(){ // Destrutor (definido por padrao)
   
 }
 
-ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){
+ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){ // Construtor que recebe como parametro os valores a serem inseridos e o pai do node
   this->id = values[0];
   this->title = values[1];
   this->type = values[2];
@@ -46,7 +46,7 @@ ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){
   this->right = nullptr;
 }
 
-string *ProgramaNetflix::getValues(){
+string *ProgramaNetflix::getValues(){ // Funcao que retorna um vetor com todos os valores presente no node
   string *values = new string[15];
   values[0] = this->id;
   values[1] = this->title;
@@ -66,7 +66,7 @@ string *ProgramaNetflix::getValues(){
   return values;
 }
 
-void ProgramaNetflix::updateValues(string *values){
+void ProgramaNetflix::updateValues(string *values){ // Funcao para atualizar os valores do node
   this->id = values[0];
   this->title = values[1];
   this->type = values[2];
@@ -85,51 +85,51 @@ void ProgramaNetflix::updateValues(string *values){
   values = nullptr;
 }
 
-ProgramaNetflix *ProgramaNetflix::getLeft(){
-  return this->left;
+ProgramaNetflix *ProgramaNetflix::getLeft(){ // Retorna o filho a esquerda
+  return this->left; 
 }
 
-void ProgramaNetflix::setLeft(ProgramaNetflix *node){
+void ProgramaNetflix::setLeft(ProgramaNetflix *node){ // Define o filho a esquerda
   this->left = node;
 }
 
-ProgramaNetflix *ProgramaNetflix::getRight(){
+ProgramaNetflix *ProgramaNetflix::getRight(){ // Retorna o filho a direita
   return this->right;
 }
 
-void ProgramaNetflix::setRight(ProgramaNetflix *node){
+void ProgramaNetflix::setRight(ProgramaNetflix *node){ // Define o filho a direita
   this->right = node;
 }
 
-ProgramaNetflix *ProgramaNetflix::getFather(){
+ProgramaNetflix *ProgramaNetflix::getFather(){ // Retorna o pai do node
   return this->father;
 }
 
-void ProgramaNetflix::setFather(ProgramaNetflix *node){
+void ProgramaNetflix::setFather(ProgramaNetflix *node){ // Define o pai do node
   this->father = node;
 }
 
-string ProgramaNetflix::getId(){
+string ProgramaNetflix::getId(){ // Retorna o ID do node
   return this->id;
 }
 
-string ProgramaNetflix::getTitle(){
+string ProgramaNetflix::getTitle(){ // Retorna o titulo do node
   return this->title;
 }
 
-string ProgramaNetflix::getType(){
+string ProgramaNetflix::getType(){ // Retorna o tipo do Programa
   return this->type;
 }
 
-int ProgramaNetflix::getYear(){
+int ProgramaNetflix::getYear(){ // Retorna o Ano de Lancamento do programa
   return this->release_year;
 }
 
-float ProgramaNetflix::getImdbScore(){
+float ProgramaNetflix::getImdbScore(){ // Retorna o IMDB Score do Programa
   return this->imdb_score;
 }
 
-void ProgramaNetflix::printValue(){
+void ProgramaNetflix::printValue(){ // Printa os valores do node
   string *values = this->getValues();
   for(int i = 0; i <  15; i++){
     cout << values[i] << " | ";

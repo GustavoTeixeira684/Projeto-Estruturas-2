@@ -4,9 +4,10 @@
 #include "utilidades.hpp"
 using namespace std;
 
+// Classe que representa o node das arvores BST e AVL
 class ProgramaNetflix{
 
-  private:
+  private: // Atributos
     string id;
     string title;
     string type;
@@ -27,23 +28,23 @@ class ProgramaNetflix{
     ProgramaNetflix *father;
 
   public:
-    ProgramaNetflix();
-    ~ProgramaNetflix();
-    ProgramaNetflix(string *values, ProgramaNetflix *father);
-    ProgramaNetflix *getLeft();
-    void setLeft(ProgramaNetflix *node);
-    ProgramaNetflix *getRight();
-    void setRight(ProgramaNetflix *node);
-    ProgramaNetflix *getFather();
-    void setFather(ProgramaNetflix *node);
-    string getId();
-    string getTitle();
-    string getType();
-    int getYear();
-    float getImdbScore();
-    string *getValues();
-    void updateValues(string *values);
-    void printValue();
+    ProgramaNetflix(); // Construtor padrao
+    ~ProgramaNetflix(); // Destrutor
+    ProgramaNetflix(string *values, ProgramaNetflix *father); // Construtor que recebe os valores para ser inseriro e o pai do novo node
+    ProgramaNetflix *getLeft(); // Retorna o filho a esquerda
+    void setLeft(ProgramaNetflix *node); // Define o filho a esquerda
+    ProgramaNetflix *getRight(); // Retorna o filho a direita
+    void setRight(ProgramaNetflix *node); // Define o filho a direita
+    ProgramaNetflix *getFather(); // Retorna o node pai do atual
+    void setFather(ProgramaNetflix *node); // Define o node pai do atual
+    string getId(); // Retorna o ID do Programa
+    string getTitle(); // Retorna o Titulo do Programa
+    string getType(); // Retorna o Tipo do Programa
+    int getYear(); // Retorna o ano de lançamento do Programa
+    float getImdbScore(); // Retorna o IMDB Score
+    string *getValues(); // Retorna um vetor com todos os valores presente no node
+    void updateValues(string *values); // Atualiza os valores do node (Utilizado no metodo de remocao)
+    void printValue(); // Exibe os valores do node na tela
     
 };
 

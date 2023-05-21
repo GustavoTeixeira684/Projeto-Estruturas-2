@@ -46,32 +46,7 @@ int stringCompare(string a, string b){ // 1 Se a for menor, -1 se b for menor e 
 	}
 }
 
-void sortList(vector<float> *salario, vector<string> *nome){ // Função para ordenar os vetores com sincronismo
-	
-	float temp_salario;
-	string temp_nome;
-	
-	for(int i = 0; i < salario->size(); i++){
-		for(int k = i+1; k < salario->size(); k++){
-			if(salario->at(k) < salario->at(i)){
-				temp_salario = salario->at(i); // Insere os valores em uma variável temporária
-				temp_nome = nome->at(i);
-				// Troca valores
-				salario->insert(salario->begin() + i, salario->at(k));
-				salario->erase(salario->begin() + i + 1);
-				nome->insert(nome->begin() + i, nome->at(k));
-				nome->erase(nome->begin() + i + 1);
-				salario->insert(salario->begin() + k, temp_salario);
-				salario->erase(salario->begin() + k + 1);
-				nome->insert(nome->begin() + k, temp_nome);
-				nome->erase(nome->begin() + k + 1);
-			}
-		}
-	}
-	
-}
-
-string substring(string text, int begin, int end){
+string substring(string text, int begin, int end){ // Funcao para tirar uma substring de uma string
 	string temp = "";
 	for(int i = begin; i < end; i++){
 		temp += text[i];
@@ -79,7 +54,7 @@ string substring(string text, int begin, int end){
 	return temp;
 }
 
-int stringIndex(string text, char character, int begin){
+int stringIndex(string text, char character, int begin){ // Funcao que encontra o indice da primeira ocorrencia de um caractere em uma string
 
 	for(int i = begin; i < tamanho(text); i++){
 		if(text[i] == character){
@@ -90,7 +65,7 @@ int stringIndex(string text, char character, int begin){
 
 }
 
-string *strSplit(string text, char delimiter, int *length){
+string *strSplit(string text, char delimiter, int *length){ // Funcao que recebe uma string e um delimitador e retorna um vetor e o seu tamanho
 	string *values, temp;
 	int count = 0, index = 0;
 	for(int i = 0; i < tamanho(text); i++){
@@ -113,7 +88,7 @@ string *strSplit(string text, char delimiter, int *length){
 	return values;
 }
 
-string strReplace(string text, char oldChar, char newChar){
+string strReplace(string text, char oldChar, char newChar){ // Funcao que substitui caracteres de uma string
 	int i = 0;
 	while(text[i] != '\0'){
 		if(text[i] == oldChar){
@@ -124,14 +99,14 @@ string strReplace(string text, char oldChar, char newChar){
 	return text;
 }
 
-string *dropIndex(string *values, int index, int length){
+string *dropIndex(string *values, int index, int length){ // Funcao que apaga o caractere em um determinado indice de uma string
 	for(int i = index; i < length-1; i++){
 		values[i] = values[i+1];
 	}
 	return values;
 }
 
-bool isNull(string values){
+bool isNull(string values){ // Funcao que retorna true se a string tiver apenas caracteres considerados como nulo ou espaços em branco
 	int i = 0;
 	if(tamanho(values) > 0){
 		while(values[i] != '\0'){
@@ -145,7 +120,7 @@ bool isNull(string values){
 	return true;
 }
 
-bool isNumber(string value){
+bool isNumber(string value){ // Funcao que retorna true se a string tiver somente caracteres numericos
   int i = 0;
   while(value[i] != '\0'){
     if((int)value[i] < 48 || (int)value[i] > 57){
@@ -156,7 +131,7 @@ bool isNumber(string value){
   return true;
 }
 
-void fillEmpty(string *values, int *length){
+void fillEmpty(string *values, int *length){ // Funcao que substitui campos nulos em determinados indices do vetor para 0
 	for(int i = 0; i < *length; i++){
 		if(isNull(values[i])){
 			if(i == 4 || i == 6 || i == 9 || i > 10){
@@ -166,7 +141,7 @@ void fillEmpty(string *values, int *length){
 	}
 }
 
-string clearChar(string value, char oldChar){
+string clearChar(string value, char oldChar){ // Funcao que tira determinados caracteres indesejados de uma string
 	for(int i = 0; i < tamanho(value); i++){
 		if(value[i] == oldChar){
 			for(int j = i; j < tamanho(value)-1; j++){
