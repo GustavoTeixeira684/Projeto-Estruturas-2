@@ -39,6 +39,7 @@ class ProgramaNetflix{
     string getId();
     string getTitle();
     string getType();
+    int getYear();
     float getImdbScore();
     string *getValues();
     void updateValues(string *values);

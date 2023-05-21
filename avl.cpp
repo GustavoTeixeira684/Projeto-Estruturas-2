@@ -54,21 +54,6 @@ ProgramaNetflix *AvlTree::search(string id, int *step){
   return aux;
 }
 
-// ProgramaNetflix *AvlTree::search(string id, ProgramaNetflix *father){
-//   ProgramaNetflix *aux = this->root;
-//   int compare;
-//   while( aux != nullptr && aux->getId() != id){
-//     father = aux;
-//     compare = stringCompare(id, aux->getId());
-//     if(compare == -1){ // Valor procurado maior que o do nó atual
-//       aux = aux->getRight();
-//     }else if(compare == 1){ // Valor procurado menor que o do nó atual
-//       aux = aux->getLeft();
-//     }
-//   }
-//   return aux;
-// }
-
 int AvlTree::getHeight(ProgramaNetflix *node){
   int alturaEsquerda, alturaDireita;
   if(node == nullptr){
@@ -249,7 +234,6 @@ bool AvlTree::remove(string id, int *step){
 void AvlTree::insertColumns(string *values){
   if(this->col != nullptr){
     this->col->clear();
-    delete col;
   }
   Column *temp = new Column(values);
   this->col = temp;

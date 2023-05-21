@@ -19,9 +19,6 @@ void Column::clear(){
 }
 
 Column::Column(string *values){
-  if(this->values != nullptr){
-    delete[] this->values;
-  }
   this->values = new string[15];
   for(int i = 0; i < 15; i++){
     this->values[i] = values[i];

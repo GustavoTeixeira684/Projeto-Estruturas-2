@@ -35,12 +35,12 @@ ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){
   this->runtime = stoi(values[6]);
   this->genres = values[7];
   this->production_countries = values[8];
-  this->seasons = stof(values[9]);
+  this->seasons = stof(strReplace(values[9],'.',','));
   this->imdb_id = values[10];
-  this->imdb_score = stof(values[11]);
-  this->imdb_votes = stof(values[12]);
-  this->tmdb_popularity = stof(values[13]);
-  this->tmdb_score = stof(values[14]);
+  this->imdb_score = stof(strReplace(values[11],'.',','));
+  this->imdb_votes = stof(strReplace(values[12],'.',','));
+  this->tmdb_popularity = stof(strReplace(values[13],'.',','));
+  this->tmdb_score = stof(strReplace(values[14],'.',','));
   this->father = father;
   this->left = nullptr;
   this->right = nullptr;
@@ -76,12 +76,12 @@ void ProgramaNetflix::updateValues(string *values){
   this->runtime = stoi(values[6]);
   this->genres = values[7];
   this->production_countries = values[8];
-  this->seasons = stof(values[9]);
+  this->seasons = stof(strReplace(values[9],'.',','));
   this->imdb_id = values[10];
-  this->imdb_score = stof(values[11]);
-  this->imdb_votes = stof(values[12]);
-  this->tmdb_popularity = stof(values[13]);
-  this->tmdb_score = stof(values[14]);
+  this->imdb_score = stof(strReplace(values[11],'.',','));
+  this->imdb_votes = stof(strReplace(values[12],'.',','));
+  this->tmdb_popularity = stof(strReplace(values[13],'.',','));
+  this->tmdb_score = stof(strReplace(values[14],'.',','));
   values = nullptr;
 }
 
@@ -119,6 +119,10 @@ string ProgramaNetflix::getTitle(){
 
 string ProgramaNetflix::getType(){
   return this->type;
+}
+
+int ProgramaNetflix::getYear(){
+  return this->release_year;
 }
 
 float ProgramaNetflix::getImdbScore(){

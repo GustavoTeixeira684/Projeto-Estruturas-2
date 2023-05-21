@@ -30,4 +30,6 @@ bool isNumber(string value); // Funcao para ver se ovalor inserido e numerico
 
 void fillEmpty(string *values, int *length);
 
+string clearChar(string value, char oldChar);
+
 #endif

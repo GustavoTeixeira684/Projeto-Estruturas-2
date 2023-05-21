@@ -166,3 +166,14 @@ void fillEmpty(string *values, int *length){
 	}
 }
 
+string clearChar(string value, char oldChar){
+	for(int i = 0; i < tamanho(value); i++){
+		if(value[i] == oldChar){
+			for(int j = i; j < tamanho(value)-1; j++){
+				value[j] = value[j+1];
+			}
+			value[tamanho(value)-1] = '\0';
+		}
+	}
+	return value;
+}
