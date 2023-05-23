@@ -46,7 +46,7 @@ ProgramaNetflix::ProgramaNetflix(string *values, ProgramaNetflix *father){ // Co
   this->right = nullptr;
 }
 
-string *ProgramaNetflix::getValues(){ // Funcao que retorna um vetor com todos os valores presente no node
+string *ProgramaNetflix::getValues(){ // Metodo que retorna um vetor com todos os valores presente no node
   string *values = new string[15];
   values[0] = this->id;
   values[1] = this->title;
@@ -66,7 +66,7 @@ string *ProgramaNetflix::getValues(){ // Funcao que retorna um vetor com todos o
   return values;
 }
 
-void ProgramaNetflix::updateValues(string *values){ // Funcao para atualizar os valores do node
+void ProgramaNetflix::updateValues(string *values){ // Metodo para atualizar os valores do node
   this->id = values[0];
   this->title = values[1];
   this->type = values[2];

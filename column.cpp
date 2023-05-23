@@ -2,7 +2,8 @@
 
 Column::Column(){ // Construtor padrao. Insere valores padrao para a coluna
   this->values = new string[15];
-  string valuesTemp[] = {"id","title","type","description","release_year","age_certification","runtime","genres","production_countries","seasons","imdb_id","imdb_score","imdb_votes","tmdb_popularity","tmdb_score"};
+  string valuesTemp[] = {"id","title","type","description","release_year","age_certification","runtime","genres",
+  "production_countries","seasons","imdb_id","imdb_score","imdb_votes","tmdb_popularity","tmdb_score"};
 
   for(int i = 0; i < 15; i++){
     this->values[i] = valuesTemp[i];

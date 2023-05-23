@@ -88,7 +88,7 @@ void BstTree::insert(string *values, int *step){ // Metodo para inserir um eleme
   this->qntNodes++; // Incrementa um na quantidade de nodes
 }
 
-bool BstTree::remove(string id, int *step){ // Metodo para remover um elemento da lista (De forma iterativa)
+bool BstTree::remove(string id, int *step){ // Metodo para remover um elemento da arvore (De forma iterativa)
   // Esse metodo foi desenvolvido utilizando a seguinte logica:
   // Se o node tiver dois filhos, encontrar o maior dos menores e trocar os valores. Assim nao precisamos ficar trocando nodes de posicao
   // Se o node tiver apenas um filho, remove o node e coloca seu filho como filho do pai do node que iremos remover
