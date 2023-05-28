@@ -59,8 +59,9 @@ void fillVector(ProgramaNetflix *node, vector<string*> *list){ // Funçao para p
 void fillByType(ProgramaNetflix *node, vector<ProgramaNetflix*> *showList, vector<ProgramaNetflix*> *movieList){ // Funçao para popular dois vectors contendo as obras que sao movies e que sao shows
   // Sao gerados dois vectors para analise ao inves de popular um inteiro e procurar nesse vetor os dois tipos
   // Dessa forma, ao fim da funcao, temos dois conjuntos de dados segmentados para trabalharmos na analise
-  if(node != nullptr){ // Utiliza o persurso in-order para popular os vectors
+  if(node != nullptr){ // Utiliza o persurso pos-order para popular os vectors
     fillByType(node->getLeft(), showList, movieList);
+    fillByType(node->getRight(), showList, movieList);
     string type = node->getType();
     float imdbScore = node->getImdbScore();
     if(imdbScore > 0){ // Como nosso programa le todos os dados do arquivo e coloca 0 para os valores nulos, nao consideramos esses valores para as analises, pois usamos medidas estatisticas sensiveis
@@ -70,7 +71,6 @@ void fillByType(ProgramaNetflix *node, vector<ProgramaNetflix*> *showList, vecto
         movieList->push_back(node); // insere no vector que armazena as informaçoes dos movies
       }
     }
-    fillByType(node->getRight(), showList, movieList);
   }
 }
 
@@ -79,8 +79,9 @@ void fillDecade(ProgramaNetflix *node, vector<t_Decade*> *listDecades, vector<st
   // O segundo eh um vector que contem os dados da arvore. Utilizamos o mesmo para as analises posteriores
   // Nao incluimos aqui pois essa funcao trabalha de forma recursiva, o que seria um problema incluindo duas etapas diferentes, mesmo que da mesma analise
   // Apos essa funcao, o segundo vector eh usado para calculo do desvio padrao.
+  // Utiliza pre-ordem
   if(node != nullptr){
-    fillDecade(node->getLeft(), listDecades, list);
+
 
     bool verifier = false;
     t_Decade *temp;
@@ -116,6 +117,7 @@ void fillDecade(ProgramaNetflix *node, vector<t_Decade*> *listDecades, vector<st
     }
     list->push_back(values); // Insere as informacoes do node no segundo vector
 
+    fillDecade(node->getLeft(), listDecades, list);
     fillDecade(node->getRight(), listDecades, list);
   }
 }
@@ -807,6 +809,7 @@ int main() {
         delete credits; // Limpar Fila
         delete values; // Limpar vetor de valores
         values = nullptr;
+        cout << "\nOBRIGADO POR UTILIZAR O PROGRAMA DE ANALISE/CIENCIA DE DADOS\n\n";
       break;
       default: // Caso o usuario selecione outros valores
         cout << "\n\nPor favor, Digite um valor valido!!\n\n";
